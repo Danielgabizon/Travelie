@@ -31,7 +31,6 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
         }
         commonTest.dependencies {
@@ -74,6 +73,12 @@ dependencies {
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.ui.graphics)
+
+    implementation(libs.coil.compose.v250)
+
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
 }
 

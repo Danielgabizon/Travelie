@@ -1,9 +1,14 @@
 package org.colman.travelie.features
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 
 interface UiState
 
-expect open class BaseViewModel() {
+interface ViewStateHolder<S : UiState> {
+    val uiState: StateFlow<S>
+}
+
+expect abstract class BaseViewModel<S: UiState>() : ViewStateHolder<S> {
     val scope: CoroutineScope
 }

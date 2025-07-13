@@ -4,6 +4,11 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinxSerialization)
+
+    id("co.touchlab.skie") version "0.10.1"
+
+
 }
 
 kotlin {
@@ -11,6 +16,8 @@ kotlin {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+            freeCompilerArgs.add("-Xexpect-actual-classes")
+
         }
     }
     
@@ -26,15 +33,30 @@ kotlin {
     }
     
     sourceSets {
-        commonMain.dependencies {
-            implementation(libs.kotlinx.coroutines.core)
-
-        }
         androidMain.dependencies {
             implementation(libs.androidx.lifecycle.viewmodel.ktx)
+            implementation(libs.ktor.client.okhttp)
+
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
+
         }
+        commonMain.dependencies {
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.test)
+
+            implementation(libs.kotlinx.coroutines.core)
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+        }
+
         iosMain.dependencies {
             // put your iOS-specific dependencies here
+            implementation(libs.ktor.client.darwin) // iOS
         }
     }
 }
