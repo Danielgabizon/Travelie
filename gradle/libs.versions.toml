@@ -15,6 +15,7 @@ coilCompose = "2.4.0"
 coilComposeVersion = "2.5.0"
 compose-multiplatform = "1.7.3"
 firebaseBom = "33.14.0"
+firebaseBomVersion = "33.16.0"
 firebaseCommonKtx = "21.0.0"
 firebaseFirestore = "2.1.0"
 foundation = "1.7.8"
@@ -48,6 +49,7 @@ coil-compose-v250 = { module = "io.coil-kt:coil-compose", version.ref = "coilCom
 coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseFirestore" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-bom-v33160 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 firebase-common = { module = "dev.gitlive:firebase-common", version.ref = "firebaseFirestore" }
 firebase-common-ktx = { module = "com.google.firebase:firebase-common-ktx", version.ref = "firebaseCommonKtx" }
 firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "firebaseFirestore" }

@@ -15,7 +15,7 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
             freeCompilerArgs.add("-Xexpect-actual-classes")
 
         }
@@ -42,6 +42,10 @@ kotlin {
 
         }
         commonMain.dependencies {
+            implementation(libs.firebase.firestore)
+            implementation(libs.firebase.common)
+           implementation(libs.firebase.auth)
+            implementation(project.dependencies.platform(libs.firebase.bom))
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.test)
@@ -65,8 +69,8 @@ android {
     namespace = "org.colman.travelie.shared"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
