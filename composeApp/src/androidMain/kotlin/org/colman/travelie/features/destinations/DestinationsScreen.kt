@@ -1,4 +1,4 @@
-package org.colman.travelie.features
+package org.colman.travelie.features.destinations
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.platform.LocalContext
@@ -20,8 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import org.colman.travelie.features.destinations.DestinationsState
-import org.colman.travelie.features.destinations.DestinationsViewModel
 import org.colman.travelie.models.Destination
 import org.colman.travelie.models.Destinations
 import org.koin.androidx.compose.koinViewModel
