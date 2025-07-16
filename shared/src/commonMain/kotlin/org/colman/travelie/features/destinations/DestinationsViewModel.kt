@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.colman.travelie.data.Result
-import org.colman.travelie.domain.GetDestinations
 import org.colman.travelie.models.Destinations
 import org.colman.travelie.features.BaseViewModel
 
@@ -12,7 +11,9 @@ class DestinationsViewModel(
     val useCases: DestinationsUseCases
 ) : BaseViewModel<DestinationsState>() {
 
-    private val _uiState: MutableStateFlow<DestinationsState> = MutableStateFlow(DestinationsState.Loading)
+    private val _uiState: MutableStateFlow<DestinationsState> = MutableStateFlow(DestinationsState.Loaded(
+        Destinations(emptyList())
+    ))
     override val uiState: StateFlow<DestinationsState> get() = _uiState
 
     fun search(query: String) {

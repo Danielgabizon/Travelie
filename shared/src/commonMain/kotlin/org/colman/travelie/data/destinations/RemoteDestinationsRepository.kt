@@ -42,8 +42,6 @@ class RemoteDestinationsRepository(
                     accept(ContentType.Application.Json)
                 }
             }
-            val text = response.bodyAsText()
-            println("DEBUG: Raw response JSON:\n$text")
             if (!response.status.isSuccess()) {
                 val errorText = response.bodyAsText() // get the response body content
                 return Result.Failure(

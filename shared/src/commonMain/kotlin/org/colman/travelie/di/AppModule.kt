@@ -2,7 +2,7 @@ package org.colman.travelie.di
 
 import org.colman.travelie.data.destinations.DestinationsRepository
 import org.colman.travelie.data.destinations.RemoteDestinationsRepository
-import org.colman.travelie.domain.GetDestinations
+import org.colman.travelie.domain.Destinations.GetDestinations
 import org.colman.travelie.features.destinations.DestinationsUseCases
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine

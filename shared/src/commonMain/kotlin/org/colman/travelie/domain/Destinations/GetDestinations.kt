@@ -1,4 +1,4 @@
-package org.colman.travelie.domain
+package org.colman.travelie.domain.Destinations
 
 import org.colman.travelie.data.destinations.DestinationsRepository
 
