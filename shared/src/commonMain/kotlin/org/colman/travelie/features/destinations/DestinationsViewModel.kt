@@ -6,15 +6,28 @@ import kotlinx.coroutines.launch
 import org.colman.travelie.data.Result
 import org.colman.travelie.models.Destinations
 import org.colman.travelie.features.BaseViewModel
+import org.colman.travelie.utils.GeoDecoder
+import org.colman.travelie.utils.LocationProvider
 
 class DestinationsViewModel(
-    val useCases: DestinationsUseCases
+    val useCases: DestinationsUseCases,
+    private val locationProvider: LocationProvider,
+    private val geoDecoder: GeoDecoder // you'll create this next
 ) : BaseViewModel<DestinationsState>() {
 
-    private val _uiState: MutableStateFlow<DestinationsState> = MutableStateFlow(DestinationsState.Loaded(
-        Destinations(emptyList())
-    ))
+    private val _uiState: MutableStateFlow<DestinationsState> = MutableStateFlow(DestinationsState.Loading)
     override val uiState: StateFlow<DestinationsState> get() = _uiState
+
+
+    fun searchByCurrentLocation() {
+        scope.launch {
+            val location = locationProvider.getCurrentLocation() ?: return@launch
+            val country = geoDecoder.getCountryFromLocation(location.latitude, location.longitude)
+            if (!country.isNullOrBlank()) {
+                search(country)
+            }
+        }
+    }
 
     fun search(query: String) {
         if (query.isBlank()) return

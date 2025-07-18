@@ -1,6 +1,8 @@
 package org.colman.travelie.features.destinations
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalContext
 
 import androidx.compose.foundation.background
@@ -19,10 +21,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import org.colman.travelie.models.Destination
 import org.colman.travelie.models.Destinations
 import org.koin.androidx.compose.koinViewModel
+import android.Manifest
+import android.content.pm.PackageManager
+
 
 private val Navy = Color(0xFF263238)
 private val LightGray = Color(0xFFECEFF1)
@@ -34,8 +40,38 @@ private val Terracotta = Color(0xFFC97C5D)
 fun DestinationsScreen(
     viewModel: DestinationsViewModel = koinViewModel()
 ) {
+
+    val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
     val uiState = viewModel.uiState.collectAsState().value
+
+    // Launcher instance
+    // Contract: Means we are requesting a single permission
+    // onResult is a callback that will be invoked when the user responds to the permission request
+    val permissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted ->
+                if (isGranted) {
+                    viewModel.searchByCurrentLocation()
+                }
+            }
+        )
+
+
+    // Request location or auto-search if already granted
+    LaunchedEffect(Unit) {
+        val permissionStatus = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+            viewModel.searchByCurrentLocation()
+        } else {
+            // launch the permission launcher
+            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -76,6 +112,10 @@ fun DestinationsScreen(
                 Text("Search")
             }
         }
+
+
+
+
 
         when (uiState) {
             is DestinationsState.Error -> ErrorContent(uiState.errorMessage)
