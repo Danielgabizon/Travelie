@@ -1,12 +1,10 @@
 package org.colman.travelie.utils
 
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.Dispatchers
 import org.colman.travelie.models.Location
 import platform.CoreLocation.CLLocationManager
 import platform.CoreLocation.CLLocationManagerDelegateProtocol
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
 import platform.CoreLocation.CLAuthorizationStatus
 import platform.CoreLocation.CLLocation
 import platform.CoreLocation.kCLAuthorizationStatusAuthorizedAlways
@@ -15,20 +13,19 @@ import platform.CoreLocation.kCLLocationAccuracyBest
 import platform.Foundation.NSError
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import platform.CoreLocation.CLLocationCoordinate2D
-
+import org.colman.travelie.data.Result
 
 actual class LocationProvider {
 
-    private var locationManager: CLLocationManager? = null
+    private var locationManager: CLLocationManager = CLLocationManager()
 
-    actual suspend fun requestLocationPermission(): Boolean = withContext(Dispatchers.Main) {
+    init {
+        // set accuracy for location updates
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+    }
+    actual suspend fun requestLocationPermission(): Boolean =
         suspendCancellableCoroutine { continuation ->
-
-            // Get LocationManager instance and set it to the class property
-            val manager = CLLocationManager()
-            locationManager = manager
 
             // Set up a delegate to handle the authorization status change
             val delegate = object : NSObject(), CLLocationManagerDelegateProtocol {
@@ -39,55 +36,57 @@ actual class LocationProvider {
                     manager.delegate = null
                 }
             }
-
             // Assign the delegate to the CLLocationManager instance
-            manager.delegate = delegate
-
-            // Now we can request permission
-            manager.requestWhenInUseAuthorization()
+            locationManager.delegate = delegate
+            // Request location permission
+            locationManager.requestWhenInUseAuthorization()
         }
-    }
 
     @OptIn(ExperimentalForeignApi::class)
-    actual suspend fun getCurrentLocation(): Location? = withContext(Dispatchers.Main) {
+    actual suspend fun getCurrentLocation(): Result<Location, LocationError> =
         suspendCancellableCoroutine { continuation ->
-
-            // Get LocationManager instance and set it to the class property
-            val manager = CLLocationManager()
-            locationManager = manager
-
-            // Set desired accuracy
-            manager.desiredAccuracy = kCLLocationAccuracyBest
 
             // Set delegate to handle location updates
             val delegate = object : NSObject(), CLLocationManagerDelegateProtocol {
 
                 // Handle location updates
-                override fun locationManager(manager: CLLocationManager, didUpdateLocations: List<*>) {
-                    val loc = (didUpdateLocations.firstOrNull() as? CLLocation)
-                    val coordinate = loc?.coordinate as? CLLocationCoordinate2D?
+                override fun locationManager(
+                    manager: CLLocationManager,
+                    didUpdateLocations: List<*>
+                ) {
+                    val location = (didUpdateLocations.firstOrNull() as CLLocation?)
+                    val coordinate = location?.coordinate as CLLocationCoordinate2D?
                     if (coordinate != null) {
-                        continuation.resume(Location(coordinate.latitude,coordinate.longitude))
+                        continuation.resume(
+                            Result.Success(
+                                Location(
+                                    coordinate.latitude,
+                                    coordinate.longitude
+                                )
+                            )
+                        )
                     } else {
-                        continuation.resumeWithException(IllegalStateException("Location is null"))
+                        continuation.resume(Result.Failure(LocationError("Failed to retrieve location coordinates.")))
                     }
                     manager.stopUpdatingLocation()
                     manager.delegate = null
                 }
 
                 // Handle errors
-                override fun locationManager(manager: CLLocationManager, didFailWithError: NSError) {
-                    continuation.resumeWithException(Exception(didFailWithError.localizedDescription))
+                override fun locationManager(
+                    manager: CLLocationManager,
+                    didFailWithError: NSError
+                ) {
+                    continuation.resume(Result.Failure(LocationError("Failed to retrieve location: ${didFailWithError.localizedDescription}")))
                     manager.delegate = null
                 }
             }
-
             // Assign the delegate to the CLLocationManager instance
-            manager.delegate = delegate
-            // Now we can start updating location
-            manager.startUpdatingLocation()
+            locationManager.delegate = delegate
+            // Start updating location
+            locationManager.startUpdatingLocation()
 
         }
-
     }
-}
+
+

@@ -42,23 +42,22 @@ fun DestinationsScreen(
 ) {
 
     val context = LocalContext.current
-    var searchQuery by remember { mutableStateOf("") }
     val uiState = viewModel.uiState.collectAsState().value
+    var searchQuery by remember { mutableStateOf("") }
 
-    // Launcher instance
-    // Contract: Means we are requesting a single permission
-    // onResult is a callback that will be invoked when the user responds to the permission request
+
+    // Location launcher instance
+    // Once the user grants permission, we will call searchByCurrentLocation
     val permissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
-                if (isGranted) {
                     viewModel.searchByCurrentLocation()
-                }
             }
         )
 
-
-    // Request location or auto-search if already granted
+    // Once screen is launched, check for location permission
+    // if granted, call searchByCurrentLocation
+    // if not granted, request it via permissionLauncher
     LaunchedEffect(Unit) {
         val permissionStatus = ContextCompat.checkSelfPermission(
             context,
@@ -78,6 +77,7 @@ fun DestinationsScreen(
             .fillMaxSize()
             .background(LightGray)
     ) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -112,9 +112,6 @@ fun DestinationsScreen(
                 Text("Search")
             }
         }
-
-
-
 
 
         when (uiState) {

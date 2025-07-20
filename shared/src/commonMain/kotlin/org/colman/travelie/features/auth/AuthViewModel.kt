@@ -27,8 +27,8 @@ class AuthViewModel(
         _uiState.value = AuthState.Loading
         scope.launch {
             when (val result = useCases.register(email, password)) {
-                is Result.Success -> _uiState.value = AuthState.Loaded(result.data)
-                is Result.Failure -> _uiState.value = AuthState.Error(result.error?.message ?: "Unknown error")
+                is Result.Success -> _uiState.emit(AuthState.Loaded(result.data))
+                is Result.Failure -> _uiState.emit(AuthState.Error(result.error?.message ?: "Unknown error"))
             }
         }
     }

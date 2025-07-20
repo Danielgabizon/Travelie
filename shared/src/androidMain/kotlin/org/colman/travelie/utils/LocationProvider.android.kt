@@ -1,39 +1,42 @@
 package org.colman.travelie.utils
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
-import android.location.LocationManager
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import org.colman.travelie.models.Location
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.suspendCancellableCoroutine
+import com.google.android.gms.location.Priority
 import kotlin.coroutines.resume
-
+import org.colman.travelie.models.Location
+import org.colman.travelie.data.Result
+import kotlin.coroutines.suspendCoroutine
 
 actual class LocationProvider(private val context: Context) {
 
     actual suspend fun requestLocationPermission(): Boolean {
-      return false // this is a placeholder, permissions handled in the UI layer
+        // permission is handled in the UI layer
+        return false // placeholder
     }
+
     @SuppressLint("MissingPermission")
-    actual suspend fun getCurrentLocation(): Location? = suspendCancellableCoroutine { continuation ->
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.getCurrentLocation(
-            com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
-            null
-        ).addOnSuccessListener { location ->
-            if (location != null) {
-                continuation.resume(Location(location.latitude, location.longitude))
-            } else {
-                continuation.resumeWith(Result.failure(Exception("Location is null")))
-            }
-        }.addOnFailureListener { exception ->
-            continuation.resumeWith(Result.failure(exception))
+    actual suspend fun getCurrentLocation(): Result<Location, LocationError> =
+        suspendCoroutine { continuation ->
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener { loc ->
+                    if (loc != null) {
+                        continuation.resume(Result.Success(Location(loc.latitude, loc.longitude)))
+                    } else {
+                        continuation.resume(
+                            Result.Failure(LocationError("Location is null"))
+                        )
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    continuation.resume(
+                        Result.Failure(
+                            LocationError("Failed to get location: ${exception.message ?: "Unknown error"}")
+                        )
+                    )
+                }
         }
-    }
-
-
 }
