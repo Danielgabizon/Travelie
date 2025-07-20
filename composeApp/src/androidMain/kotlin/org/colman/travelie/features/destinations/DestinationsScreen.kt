@@ -214,36 +214,6 @@ fun LoadingContent() {
 }
 
 
-@Composable
-fun checkAndRequestLocationPermission(
-    onPermissionGranted: () -> Unit
-) {
-    val context = LocalContext.current
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            if (isGranted) onPermissionGranted()
-        }
-    )
-
-    LaunchedEffect(Unit) {
-        val permissionStatus = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
-            onPermissionGranted()
-        } else {
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-}
-
-
-
-
-
 
 @Preview(showBackground = true)
 @Composable
