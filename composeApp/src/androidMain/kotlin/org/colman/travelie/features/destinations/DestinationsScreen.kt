@@ -28,6 +28,7 @@ import org.colman.travelie.models.Destinations
 import org.koin.androidx.compose.koinViewModel
 import android.Manifest
 import android.content.pm.PackageManager
+import org.colman.travelie.features.destinations.permissions.HandleLocationPermission
 
 
 private val Navy = Color(0xFF263238)
@@ -36,41 +37,21 @@ private val Lavender = Color(0xFFDAD4DA)
 private val Beige = Color(0xFFD7B8A5)
 private val Terracotta = Color(0xFFC97C5D)
 
+
+
 @Composable
 fun DestinationsScreen(
     viewModel: DestinationsViewModel = koinViewModel()
 ) {
 
+
     val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsState().value
     var searchQuery by remember { mutableStateOf("") }
 
-
-    // Location launcher instance
-    // Once the user grants permission, we will call searchByCurrentLocation
-    val permissionLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                    viewModel.searchByCurrentLocation()
-            }
-        )
-
-    // Once screen is launched, check for location permission
-    // if granted, call searchByCurrentLocation
-    // if not granted, request it via permissionLauncher
-    LaunchedEffect(Unit) {
-        val permissionStatus = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
-            viewModel.searchByCurrentLocation()
-        } else {
-            // launch the permission launcher
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
+    HandleLocationPermission {
+        viewModel.searchByCurrentLocation()
     }
-
 
     Column(
         modifier = Modifier
@@ -231,6 +212,39 @@ fun LoadingContent() {
         )
     }
 }
+
+
+@Composable
+fun checkAndRequestLocationPermission(
+    onPermissionGranted: () -> Unit
+) {
+    val context = LocalContext.current
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) onPermissionGranted()
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        val permissionStatus = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+            onPermissionGranted()
+        } else {
+            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+}
+
+
+
+
+
+
 @Preview(showBackground = true)
 @Composable
 fun DestinationsContentPreview() {
