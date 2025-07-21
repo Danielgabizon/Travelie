@@ -26,10 +26,18 @@ private val Terracotta = Color(0xFFC97C5D)
 fun RegisterScreen(
     viewModel: AuthViewModel = koinViewModel(),
     onNavigateToLogin: () -> Unit,
+    onRegisterSuccess: () -> Unit
+
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    LaunchedEffect(uiState) {
+        if (uiState is AuthState.Loaded && uiState.user != null) {
+            onRegisterSuccess()
+        }
+    }
 
     Column(
         modifier = Modifier

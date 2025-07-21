@@ -27,7 +27,7 @@ actual class LocationProvider {
     actual suspend fun requestLocationPermission(): Boolean =
         suspendCancellableCoroutine { continuation ->
 
-            // Set up a delegate to handle the authorization status change
+            // set up a delegate to handle the authorization status change
             val delegate = object : NSObject(), CLLocationManagerDelegateProtocol {
                 override fun locationManager(manager: CLLocationManager, didChangeAuthorizationStatus: CLAuthorizationStatus) {
                     val authorized = didChangeAuthorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse ||
@@ -36,9 +36,9 @@ actual class LocationProvider {
                     manager.delegate = null
                 }
             }
-            // Assign the delegate to the CLLocationManager instance
             locationManager.delegate = delegate
-            // Request location permission
+
+            // request location permission
             locationManager.requestWhenInUseAuthorization()
         }
 

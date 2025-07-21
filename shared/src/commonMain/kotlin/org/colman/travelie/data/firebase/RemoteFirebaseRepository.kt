@@ -55,4 +55,29 @@ class RemoteFirebaseRepository : FirebaseRepository {
             Result.Failure(AuthError("Registration error: ${e.message ?: "Unknown error"}"))
         }
     }
+    override suspend fun logout(): Result<Unit, AuthError> {
+        return try {
+            auth.signOut()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Failure(AuthError("Logout error: ${e.message ?: "Unknown error"}"))
+        }
+    }
+
+    override suspend fun getCurrentUser(): Result<User, AuthError> {
+        val currentUser = auth.currentUser
+        return if (currentUser != null) {
+            Result.Success(
+                User(
+                    uid = currentUser.uid,
+                    email = currentUser.email ?: "",
+                    displayName = currentUser.displayName ?: ""
+                )
+            )
+        } else {
+            Result.Failure(AuthError("No authenticated user"))
+        }
+    }
+
+
 }

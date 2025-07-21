@@ -1,10 +1,7 @@
 package org.colman.travelie.features.destinations
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalContext
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,13 +18,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import org.colman.travelie.models.Destination
 import org.colman.travelie.models.Destinations
 import org.koin.androidx.compose.koinViewModel
-import android.Manifest
-import android.content.pm.PackageManager
 import org.colman.travelie.features.destinations.permissions.HandleLocationPermission
 
 

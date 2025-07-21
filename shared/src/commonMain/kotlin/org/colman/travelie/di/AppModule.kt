@@ -6,6 +6,8 @@ import org.colman.travelie.data.destinations.RemoteDestinationsRepository
 import org.colman.travelie.domain.Destinations.GetDestinations
 import org.colman.travelie.domain.Auth.Login
 import org.colman.travelie.domain.Auth.Register
+import org.colman.travelie.domain.Auth.GetCurrentUser
+import org.colman.travelie.domain.Auth.Logout
 import org.colman.travelie.features.destinations.DestinationsUseCases
 import org.colman.travelie.features.auth.AuthUseCases
 import io.ktor.client.HttpClient
@@ -49,6 +51,8 @@ val domainModule = module {
 
     factoryOf(::Login)
     factoryOf(::Register)
+    factoryOf(::GetCurrentUser)
+    factoryOf(::Logout)
 
     factoryOf(::DestinationsUseCases)
     factoryOf(::AuthUseCases)

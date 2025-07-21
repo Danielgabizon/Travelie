@@ -18,7 +18,11 @@ class AuthViewModel(
             val result = useCases.login(email, password)
             when (result) {
                 is Result.Success -> _uiState.emit(AuthState.Loaded(result.data))
-                is Result.Failure -> _uiState.emit(AuthState.Error(result.error?.message ?: "Unknown error"))
+                is Result.Failure -> _uiState.emit(
+                    AuthState.Error(
+                        result.error?.message ?: "Unknown error"
+                    )
+                )
             }
         }
     }
@@ -28,9 +32,35 @@ class AuthViewModel(
         scope.launch {
             when (val result = useCases.register(email, password)) {
                 is Result.Success -> _uiState.emit(AuthState.Loaded(result.data))
-                is Result.Failure -> _uiState.emit(AuthState.Error(result.error?.message ?: "Unknown error"))
+                is Result.Failure -> _uiState.emit(
+                    AuthState.Error(
+                        result.error?.message ?: "Unknown error"
+                    )
+                )
             }
         }
     }
 
+    fun logout() {
+        scope.launch {
+            _uiState.emit(AuthState.Loading)
+            when (val result = useCases.logout()) {
+                is Result.Success -> _uiState.emit(AuthState.Loaded(null))
+                is Result.Failure -> _uiState.emit(
+                    AuthState.Error(
+                        result.error?.message ?: "Logout failed"
+                    )
+                )
+            }
+        }
+    }
+    fun restoreSession() {
+        scope.launch {
+            _uiState.emit(AuthState.Loading)
+            when (val result = useCases.getCurrentUser()) {
+                is Result.Success -> _uiState.emit(AuthState.Loaded(result.data))
+                is Result.Failure -> _uiState.emit(AuthState.Loaded(null)) // no user logged in
+            }
+        }
+    }
 }
