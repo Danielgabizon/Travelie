@@ -57,6 +57,7 @@ class RemoteDestinationsRepository(
             } else {
                 val destinationsResponse: DestinationsResponse = response.body()
                 val destinationsList = destinationsResponse.popularDestinations.destinations
+                println("Destinations fetched: ${destinationsList.size}")
                 Result.Success(Destinations(items = destinationsList))
             }
         } catch (e: Exception) {
