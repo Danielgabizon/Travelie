@@ -13,24 +13,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.colman.travelie.models.Destination
 import org.colman.travelie.models.Destinations
 import org.koin.androidx.compose.koinViewModel
 import org.colman.travelie.features.destinations.permissions.HandleLocationPermission
-import org.colman.travelie.shared_components.Spinner
-import org.colman.travelie.shared_components.Error
+import org.colman.travelie.ui.shared_components.Spinner
+import org.colman.travelie.ui.shared_components.Error
 
-private val Navy = Color(0xFF263238)
-private val LightGray = Color(0xFFECEFF1)
-private val Lavender = Color(0xFFDAD4DA)
-private val Beige = Color(0xFFD7B8A5)
-private val Terracotta = Color(0xFFC97C5D)
+import org.colman.travelie.ui.theme.*
 
 
 
@@ -39,8 +33,6 @@ fun DestinationsScreen(
     viewModel: DestinationsViewModel = koinViewModel()
 ) {
 
-
-    val context = LocalContext.current
     val uiState = viewModel.uiState.collectAsState().value
     var searchQuery by remember { mutableStateOf("") }
 
@@ -231,7 +223,7 @@ fun DestinationsContentPreview() {
         )
     )
 
-    MaterialTheme {
+    AppTheme  {
         DestinationsContent(destinations = sampleDestinations)
     }
 }

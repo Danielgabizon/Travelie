@@ -1,4 +1,5 @@
 package org.colman.travelie.features.auth
+import org.colman.travelie.ui.theme.*
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,19 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.koinViewModel
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.colman.travelie.shared_components.Error
-import org.colman.travelie.shared_components.Spinner
+import org.colman.travelie.ui.shared_components.Error
+import org.colman.travelie.ui.shared_components.Spinner
 
-private val Navy = Color(0xFF263238)
-private val LightGray = Color(0xFFECEFF1)
-private val Lavender = Color(0xFFDAD4DA)
-private val Beige = Color(0xFFD7B8A5)
-private val Terracotta = Color(0xFFC97C5D)
 
 @Composable
 fun LoginScreen(
@@ -97,8 +92,12 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = email.isNotBlank() && password.isNotBlank(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Terracotta)
-                ) {
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Terracotta,
+                        contentColor = Color.White,
+                        disabledContainerColor = Beige,
+                        disabledContentColor = Navy.copy(alpha = 0.3f)))
+                {
                     Text("Log In", color = Color.White)
                 }
 

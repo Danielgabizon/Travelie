@@ -28,7 +28,8 @@ import com.google.firebase.FirebaseApp
 import org.colman.travelie.features.auth.LoginScreen
 import org.colman.travelie.features.auth.RegisterScreen
 import org.colman.travelie.features.destinations.DestinationsScreen
-import org.colman.travelie.shared_components.BottomNavigationBar
+import org.colman.travelie.ui.shared_components.BottomNavigationBar
+import org.colman.travelie.ui.theme.AppTheme
 
 sealed class MainAppTab(val route: String, val title: String) {
     data object Destinations : MainAppTab("destinations", "Destinations")
@@ -40,7 +41,7 @@ class MainActivity : ComponentActivity() {
         FirebaseApp.initializeApp(this)
 
         setContent {
-            MaterialTheme {
+            AppTheme {
                 val navController = rememberNavController()
 
                 val navBackStackEntry by navController.currentBackStackEntryAsState()

@@ -1,4 +1,4 @@
-package org.colman.travelie.shared_components
+package org.colman.travelie.ui.shared_components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
