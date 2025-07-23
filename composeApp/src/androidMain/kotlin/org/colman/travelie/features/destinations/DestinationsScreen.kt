@@ -23,7 +23,8 @@ import org.colman.travelie.models.Destination
 import org.colman.travelie.models.Destinations
 import org.koin.androidx.compose.koinViewModel
 import org.colman.travelie.features.destinations.permissions.HandleLocationPermission
-
+import org.colman.travelie.shared_components.Spinner
+import org.colman.travelie.shared_components.Error
 
 private val Navy = Color(0xFF263238)
 private val LightGray = Color(0xFFECEFF1)
@@ -90,9 +91,9 @@ fun DestinationsScreen(
 
 
         when (uiState) {
-            is DestinationsState.Error -> ErrorContent(uiState.errorMessage)
+            is DestinationsState.Error -> Error(uiState.errorMessage)
             is DestinationsState.Loaded -> DestinationsContent(uiState.destinations)
-            DestinationsState.Loading -> LoadingContent()
+            DestinationsState.Loading -> Spinner()
         }
     }
 }
@@ -186,26 +187,7 @@ fun DestinationGridItem(destination: Destination) {
 
 
 
-@Composable
-fun ErrorContent(message: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = message,
-            style = TextStyle(fontSize = 22.sp, color = Terracotta, textAlign = TextAlign.Center)
-        )
-    }
-}
 
-@Composable
-fun LoadingContent() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(48.dp),
-            color = Terracotta,
-            trackColor = Lavender
-        )
-    }
-}
 
 
 

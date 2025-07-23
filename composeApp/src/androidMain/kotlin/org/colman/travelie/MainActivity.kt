@@ -42,14 +42,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
+
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
+                val showNavBars: Boolean = currentRoute in listOf(MainAppTab.Destinations.route)
 
                 var selectedTab by remember { mutableStateOf<MainAppTab?>(null) }
 
-                val showNavBars = currentRoute in listOf(
-                    MainAppTab.Destinations.route
-                )
 
                 Scaffold(
                     topBar = {
@@ -69,10 +68,10 @@ class MainActivity : ComponentActivity() {
                                     selectedTab = tab
                                     navController.navigate(tab.route) {
                                         popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
+                                            saveState = true // to save the state of the previous screens
                                         }
-                                        launchSingleTop = true
-                                        restoreState = true
+                                        launchSingleTop = true // to avoid multiple instances in the back stack
+                                        restoreState = true // if state is saved, restore it
                                     }
                                 }
                             )
@@ -89,9 +88,7 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToRegister = { navController.navigate("register") },
                                 onLoginSuccess = {
                                     selectedTab = MainAppTab.Destinations
-                                    navController.navigate(MainAppTab.Destinations.route) {
-                                        popUpTo("login") { inclusive = true }
-                                    }
+                                    navController.navigate(MainAppTab.Destinations.route)
                                 }
                             )
                         }
@@ -101,9 +98,7 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToLogin = { navController.navigate("login") },
                                 onRegisterSuccess = {
                                     selectedTab = MainAppTab.Destinations
-                                    navController.navigate(MainAppTab.Destinations.route) {
-                                        popUpTo("register") { inclusive = true }
-                                    }
+                                    navController.navigate(MainAppTab.Destinations.route)
                                 }
                             )
                         }

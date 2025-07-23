@@ -12,8 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.colman.travelie.features.destinations.ErrorContent
-import org.colman.travelie.features.destinations.LoadingContent
+import org.colman.travelie.shared_components.Error
+import org.colman.travelie.shared_components.Spinner
 import org.koin.androidx.compose.koinViewModel
 
 private val Navy = Color(0xFF263238)
@@ -110,8 +110,8 @@ fun RegisterScreen(
                 )
 
                 when (uiState) {
-                    is AuthState.Error -> ErrorContent(uiState.errorMessage)
-                    is AuthState.Loading -> LoadingContent()
+                    is AuthState.Error -> Error(uiState.errorMessage)
+                    is AuthState.Loading -> Spinner()
                     is AuthState.Loaded -> {
                         if (uiState.user != null) {
                             Text(

@@ -15,8 +15,8 @@ import org.koin.androidx.compose.koinViewModel
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.colman.travelie.features.destinations.ErrorContent
-import org.colman.travelie.features.destinations.LoadingContent
+import org.colman.travelie.shared_components.Error
+import org.colman.travelie.shared_components.Spinner
 
 private val Navy = Color(0xFF263238)
 private val LightGray = Color(0xFFECEFF1)
@@ -111,17 +111,8 @@ fun LoginScreen(
                 )
 
                 when (uiState) {
-                    is AuthState.Error -> ErrorContent(uiState.errorMessage)
-                    is AuthState.Loading -> LoadingContent()
-                    is AuthState.Loaded -> {
-                        if (uiState.user != null) {
-                            Text(
-                                text = "login successful! Welcome, ${uiState.user!!.email}",
-                                color = Navy,
-                                modifier = Modifier.padding(top = 16.dp)
-                            )
-                        }
-                    }
+                    is AuthState.Error -> Error(uiState.errorMessage)
+                    is AuthState.Loading -> Spinner()
                     else -> {}
                 }
             }
