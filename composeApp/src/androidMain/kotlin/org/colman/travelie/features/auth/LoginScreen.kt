@@ -27,7 +27,7 @@ import org.colman.travelie.ui.shared_components.Spinner
 
 @Composable
 fun LoginScreen(
-    viewModel: AuthViewModel = koinViewModel(),
+    viewModel: AuthViewModel,
     onNavigateToRegister: () -> Unit,
     onLoginSuccess: () -> Unit
 ) {
@@ -40,7 +40,6 @@ fun LoginScreen(
             onLoginSuccess()
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -129,7 +128,7 @@ fun LoginScreen(
 
                         withStyle(
                             style = SpanStyle(
-                                color = Terracotta, // your highlight color
+                                color = Terracotta,
                                 fontWeight = FontWeight.Bold
                             )
                         ) {

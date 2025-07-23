@@ -11,7 +11,6 @@ class AuthViewModel(
 ) : BaseViewModel<AuthState>() {
     private val _uiState: MutableStateFlow<AuthState> = MutableStateFlow(AuthState.Loaded(null))
     override val uiState: StateFlow<AuthState> get() = _uiState
-
     fun login(email: String, password: String) {
         scope.launch {
             _uiState.emit(AuthState.Loading)
@@ -54,13 +53,5 @@ class AuthViewModel(
             }
         }
     }
-    fun restoreSession() {
-        scope.launch {
-            _uiState.emit(AuthState.Loading)
-            when (val result = useCases.getCurrentUser()) {
-                is Result.Success -> _uiState.emit(AuthState.Loaded(result.data))
-                is Result.Failure -> _uiState.emit(AuthState.Loaded(null)) // no user logged in
-            }
-        }
-    }
+
 }

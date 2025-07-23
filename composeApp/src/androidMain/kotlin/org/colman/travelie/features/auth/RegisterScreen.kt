@@ -29,7 +29,7 @@ import org.colman.travelie.ui.theme.*
 
 @Composable
 fun RegisterScreen(
-    viewModel: AuthViewModel = koinViewModel(),
+    viewModel: AuthViewModel,
     onNavigateToLogin: () -> Unit,
     onRegisterSuccess: () -> Unit
 
