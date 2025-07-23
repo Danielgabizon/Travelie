@@ -14,7 +14,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.Image
-
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import org.colman.travelie.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.colman.travelie.ui.shared_components.Error
@@ -37,16 +41,25 @@ fun LoginScreen(
         }
     }
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(LightGray)
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(32.dp))
 
 
+        Image(
+            painter = painterResource(id = R.drawable.satic_logo),
+            contentDescription = "App Logo",
+            modifier = Modifier
+                .size(256.dp)
+                .padding(bottom = 24.dp)
+        )
         Card(
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(4.dp),
@@ -54,7 +67,10 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                Text("Login", fontSize = 24.sp, color = Navy, modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text("Login",
+                    fontSize = 24.sp,
+                    color = Navy,
+                    modifier = Modifier.align(Alignment.CenterHorizontally))
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -108,9 +124,22 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Don't have an account? Register",
-                    color = Navy,
-                    modifier = Modifier.clickable { onNavigateToRegister() }
+                    buildAnnotatedString {
+                        append("Don't have an account? ")
+
+                        withStyle(
+                            style = SpanStyle(
+                                color = Terracotta, // your highlight color
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append("Register")
+                        }
+                    },
+                    modifier = Modifier
+                        .clickable { onNavigateToRegister() }
+                        .align(Alignment.CenterHorizontally),
+                    color = Navy // base color for other text
                 )
 
 

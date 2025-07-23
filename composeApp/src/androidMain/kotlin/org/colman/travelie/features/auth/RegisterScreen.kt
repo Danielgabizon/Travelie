@@ -1,5 +1,6 @@
 package org.colman.travelie.features.auth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,9 +10,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.colman.travelie.R
 import org.colman.travelie.ui.shared_components.Error
 import org.colman.travelie.ui.shared_components.Spinner
 import org.koin.androidx.compose.koinViewModel
@@ -42,9 +49,18 @@ fun RegisterScreen(
             .fillMaxSize()
             .background(LightGray)
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.satic_logo),
+            contentDescription = "App Logo",
+            modifier = Modifier
+                .size(256.dp)
+                .padding(bottom = 24.dp)
+        )
         Card(
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(4.dp),
@@ -106,10 +122,24 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Already have an account? Log in",
-                    color = Navy,
-                    modifier = Modifier.clickable { onNavigateToLogin() }
+                    buildAnnotatedString {
+                        append("Already have an account? ")
+
+                        withStyle(
+                            style = SpanStyle(
+                                color = Terracotta, // your highlight color
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append("Login")
+                        }
+                    },
+                    modifier = Modifier
+                        .clickable { onNavigateToLogin() }
+                        .align(Alignment.CenterHorizontally),
+                    color = Navy // base color for other text
                 )
+
             }
 
         }
