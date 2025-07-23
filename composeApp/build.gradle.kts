@@ -81,7 +81,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation("androidx.navigation:navigation-compose:2.7.3")
     implementation(libs.coil.compose.v250)
-
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+    implementation(libs.core.splashscreen)
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
