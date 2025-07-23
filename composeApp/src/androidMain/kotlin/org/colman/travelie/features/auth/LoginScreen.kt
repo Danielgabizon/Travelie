@@ -50,7 +50,7 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                Text("Login", fontSize = 24.sp, color = Navy)
+                Text("Login", fontSize = 24.sp, color = Navy, modifier = Modifier.align(Alignment.CenterHorizontally))
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -109,12 +109,18 @@ fun LoginScreen(
                     modifier = Modifier.clickable { onNavigateToRegister() }
                 )
 
-                when (uiState) {
-                    is AuthState.Error -> Error(uiState.errorMessage)
-                    is AuthState.Loading -> Spinner()
-                    else -> {}
-                }
+
             }
+
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        when (uiState) {
+            is AuthState.Error -> Error(uiState.errorMessage, modifier = Modifier.fillMaxWidth())
+            is AuthState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
+            else -> {}
         }
     }
+
 }

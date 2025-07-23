@@ -12,8 +12,8 @@ import androidx.compose.ui.unit.dp
 import org.colman.travelie.ui.theme.*
 
 @Composable
-fun Spinner() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+fun Spinner(modifier: Modifier = Modifier) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
             modifier = Modifier.size(48.dp),
             color = Terracotta,

@@ -52,7 +52,7 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                Text("Register", fontSize = 24.sp, color = Navy)
+                Text("Register", fontSize = 24.sp, color = Navy,modifier = Modifier.align(Alignment.CenterHorizontally))
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -110,22 +110,18 @@ fun RegisterScreen(
                     color = Navy,
                     modifier = Modifier.clickable { onNavigateToLogin() }
                 )
-
-                when (uiState) {
-                    is AuthState.Error -> Error(uiState.errorMessage)
-                    is AuthState.Loading -> Spinner()
-                    is AuthState.Loaded -> {
-                        if (uiState.user != null) {
-                            Text(
-                                text = "Registration successful! Welcome, ${uiState.user!!.email}",
-                                color = Navy,
-                                modifier = Modifier.padding(top = 16.dp)
-                            )
-                        }
-                    }
-                    else -> {}
-                }
             }
+
+        }
+        Spacer(modifier = Modifier.height(32.dp))
+
+        when (uiState) {
+            is AuthState.Error -> Error(uiState.errorMessage, modifier = Modifier.fillMaxWidth())
+            is AuthState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
+            else -> {}
         }
     }
+
 }
+
+

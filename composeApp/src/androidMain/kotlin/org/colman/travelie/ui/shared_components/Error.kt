@@ -13,8 +13,8 @@ import org.colman.travelie.ui.theme.*
 
 
 @Composable
-fun Error(message: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+fun Error(message: String,modifier: Modifier = Modifier) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Text(
             text = message,
             style = TextStyle(fontSize = 22.sp, color = Terracotta, textAlign = TextAlign.Center)
