@@ -1,34 +1,22 @@
 package org.colman.travelie
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
-import org.colman.travelie.features.auth.AuthState
-import org.colman.travelie.features.auth.AuthViewModel
-import org.colman.travelie.features.auth.LoginScreen
-import org.colman.travelie.features.auth.RegisterScreen
+import org.colman.travelie.features.auth.*
 import org.colman.travelie.features.destinations.DestinationsScreen
 import org.colman.travelie.ui.shared_components.BottomNavigationBar
 import org.colman.travelie.ui.theme.AppTheme
@@ -37,10 +25,9 @@ import org.koin.androidx.compose.koinViewModel
 sealed class MainAppTab(val route: String, val title: String) {
     data object Destinations : MainAppTab("destinations", "Destinations")
     data object Logout : MainAppTab("logout", "Logout")
-
 }
 
-class MainActivity() : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -49,33 +36,27 @@ class MainActivity() : ComponentActivity() {
         setContent {
             AppTheme {
                 val authViewModel: AuthViewModel = koinViewModel()
-                val uiState = authViewModel.uiState.collectAsState().value
-
+                val uiState by authViewModel.uiState.collectAsState()
                 val user = (uiState as? AuthState.Loaded)?.user
                 val isLoggedIn = user != null
 
                 val navController = rememberNavController()
                 var selectedTab by remember { mutableStateOf<MainAppTab?>(null) }
-
                 val defaultTab = MainAppTab.Destinations
 
                 LaunchedEffect(user) {
                     if (user != null && selectedTab == null) {
                         selectedTab = defaultTab
-                        navController.navigate(defaultTab.route) {
-                            popUpTo("login") { inclusive = true }
-                            launchSingleTop = true
-                            restoreState = true
+                        navController.navigate("main_graph") {
+                            popUpTo("auth_graph") { inclusive = true }
                         }
                     } else if (user == null) {
                         selectedTab = null
-                        navController.navigate("login") {
+                        navController.navigate("auth_graph") {
                             popUpTo(0) { inclusive = true }
                         }
                     }
                 }
-
-
 
                 Scaffold(
                     topBar = {
@@ -97,7 +78,7 @@ class MainActivity() : ComponentActivity() {
                                     } else {
                                         selectedTab = tab
                                         navController.navigate(tab.route) {
-                                            popUpTo(navController.graph.startDestinationId) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
                                                 saveState = true
                                             }
                                             launchSingleTop = true
@@ -111,25 +92,28 @@ class MainActivity() : ComponentActivity() {
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "login",
+                        startDestination = "auth_graph",
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        composable("login") {
-                            LoginScreen(
-                                viewModel = authViewModel,
-                                onNavigateToRegister = { navController.navigate("register") },
-                            )
+                        navigation(startDestination = "login", route = "auth_graph") {
+                            composable("login") {
+                                LoginScreen(
+                                    viewModel = authViewModel,
+                                    onNavigateToRegister = { navController.navigate("register") },
+                                )
+                            }
+                            composable("register") {
+                                RegisterScreen(
+                                    viewModel = authViewModel,
+                                    onNavigateToLogin = { navController.navigate("login") },
+                                )
+                            }
                         }
 
-                        composable("register") {
-                            RegisterScreen(
-                                viewModel = authViewModel,
-                                onNavigateToLogin = { navController.navigate("login") },
-                            )
-                        }
-
-                        composable(MainAppTab.Destinations.route) {
-                            DestinationsScreen()
+                        navigation(startDestination = MainAppTab.Destinations.route, route = "main_graph") {
+                            composable(MainAppTab.Destinations.route) {
+                                DestinationsScreen()
+                            }
                         }
                     }
                 }
