@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +57,26 @@ class MainActivity() : ComponentActivity() {
                 val navController = rememberNavController()
                 var selectedTab by remember { mutableStateOf<MainAppTab?>(null) }
 
+                val defaultTab = MainAppTab.Destinations
+
+                LaunchedEffect(user) {
+                    if (user != null && selectedTab == null) {
+                        selectedTab = defaultTab
+                        navController.navigate(defaultTab.route) {
+                            popUpTo("login") { inclusive = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    } else if (user == null) {
+                        selectedTab = null
+                        navController.navigate("login") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                }
+
+
+
                 Scaffold(
                     topBar = {
                         if (isLoggedIn && selectedTab != null) {
@@ -73,10 +94,6 @@ class MainActivity() : ComponentActivity() {
                                 onTabSelected = { tab ->
                                     if (tab == MainAppTab.Logout) {
                                         authViewModel.logout()
-                                        selectedTab = null
-                                        navController.navigate("login") {
-                                            popUpTo(0) { inclusive = true }
-                                        }
                                     } else {
                                         selectedTab = tab
                                         navController.navigate(tab.route) {
@@ -101,16 +118,6 @@ class MainActivity() : ComponentActivity() {
                             LoginScreen(
                                 viewModel = authViewModel,
                                 onNavigateToRegister = { navController.navigate("register") },
-                                onLoginSuccess = {
-                                    selectedTab = MainAppTab.Destinations
-                                    navController.navigate(MainAppTab.Destinations.route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                }
                             )
                         }
 
@@ -118,16 +125,6 @@ class MainActivity() : ComponentActivity() {
                             RegisterScreen(
                                 viewModel = authViewModel,
                                 onNavigateToLogin = { navController.navigate("login") },
-                                onRegisterSuccess = {
-                                    selectedTab = MainAppTab.Destinations
-                                    navController.navigate(MainAppTab.Destinations.route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                }
                             )
                         }
 
