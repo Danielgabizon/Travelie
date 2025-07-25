@@ -18,6 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
 import org.colman.travelie.features.auth.*
 import org.colman.travelie.features.destinations.DestinationsScreen
+import org.colman.travelie.ui.navigation.authNestedGraph
+import org.colman.travelie.ui.navigation.mainAppNestedGraph
 import org.colman.travelie.ui.shared_components.BottomNavigationBar
 import org.colman.travelie.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
@@ -95,26 +97,11 @@ class MainActivity : ComponentActivity() {
                         startDestination = "auth_graph",
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        navigation(startDestination = "login", route = "auth_graph") {
-                            composable("login") {
-                                LoginScreen(
-                                    viewModel = authViewModel,
-                                    onNavigateToRegister = { navController.navigate("register") },
-                                )
-                            }
-                            composable("register") {
-                                RegisterScreen(
-                                    viewModel = authViewModel,
-                                    onNavigateToLogin = { navController.navigate("login") },
-                                )
-                            }
-                        }
-
-                        navigation(startDestination = MainAppTab.Destinations.route, route = "main_graph") {
-                            composable(MainAppTab.Destinations.route) {
-                                DestinationsScreen()
-                            }
-                        }
+                        authNestedGraph(
+                            authViewModel = authViewModel,
+                            navController = navController
+                        )
+                       mainAppNestedGraph()
                     }
                 }
             }
