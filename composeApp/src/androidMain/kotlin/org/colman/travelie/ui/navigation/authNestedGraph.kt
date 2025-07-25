@@ -11,17 +11,17 @@ import org.colman.travelie.features.destinations.DestinationsScreen
 
 fun NavGraphBuilder.authNestedGraph(authViewModel: AuthViewModel,
                                     navController: androidx.navigation.NavController) {
-    navigation(startDestination = "login", route = "auth_graph") {
-        composable("login") {
+    navigation(startDestination = Routes.LOGIN, route = Routes.AUTH_GRAPH) {
+        composable(Routes.LOGIN) {
             LoginScreen(
                 viewModel = authViewModel,
-                onNavigateToRegister = { navController.navigate("register") },
+                onNavigateToRegister = { navController.navigate(Routes.REGISTER) },
             )
         }
-        composable("register") {
+        composable(Routes.REGISTER) {
             RegisterScreen(
                 viewModel = authViewModel,
-                onNavigateToLogin = { navController.navigate("login") },
+                onNavigateToLogin = { navController.navigate(Routes.LOGIN) },
             )
         }
     }

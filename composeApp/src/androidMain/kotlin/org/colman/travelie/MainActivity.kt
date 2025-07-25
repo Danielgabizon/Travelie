@@ -12,21 +12,19 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
 import org.colman.travelie.features.auth.*
-import org.colman.travelie.features.destinations.DestinationsScreen
 import org.colman.travelie.ui.navigation.authNestedGraph
 import org.colman.travelie.ui.navigation.mainAppNestedGraph
 import org.colman.travelie.ui.shared_components.BottomNavigationBar
 import org.colman.travelie.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
+import org.colman.travelie.ui.navigation.Routes
 
 sealed class MainAppTab(val route: String, val title: String) {
-    data object Destinations : MainAppTab("destinations", "Destinations")
-    data object Logout : MainAppTab("logout", "Logout")
+    data object Destinations : MainAppTab(Routes.DESTINATIONS, "Destinations")
+    data object Logout : MainAppTab(Routes.LOGOUT, "Logout")
 }
 
 class MainActivity : ComponentActivity() {
@@ -49,12 +47,12 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(user) {
                     if (user != null && selectedTab == null) {
                         selectedTab = defaultTab
-                        navController.navigate("main_graph") {
+                        navController.navigate(Routes.MAIN_GRAPH) {
                             popUpTo("auth_graph") { inclusive = true }
                         }
                     } else if (user == null) {
                         selectedTab = null
-                        navController.navigate("auth_graph") {
+                        navController.navigate(Routes.AUTH_GRAPH) {
                             popUpTo(0) { inclusive = true }
                         }
                     }
@@ -94,14 +92,14 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "auth_graph",
+                        startDestination = Routes.AUTH_GRAPH,
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         authNestedGraph(
                             authViewModel = authViewModel,
                             navController = navController
                         )
-                       mainAppNestedGraph()
+                        mainAppNestedGraph()
                     }
                 }
             }

@@ -8,8 +8,8 @@ import org.colman.travelie.MainAppTab
 import org.colman.travelie.features.destinations.DestinationsScreen
 
 fun NavGraphBuilder.mainAppNestedGraph() {
-    navigation(startDestination = MainAppTab.Destinations.route, route = "main_graph") {
-        composable(MainAppTab.Destinations.route) {
+    navigation(startDestination = Routes.DESTINATIONS, route = Routes.MAIN_GRAPH) {
+        composable(Routes.DESTINATIONS) {
             DestinationsScreen()
         }
     }
