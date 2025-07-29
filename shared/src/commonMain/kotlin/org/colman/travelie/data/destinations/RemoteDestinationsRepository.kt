@@ -7,7 +7,6 @@ import org.colman.travelie.models.Destinations
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.accept
-import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
@@ -57,7 +56,6 @@ class RemoteDestinationsRepository(
             } else {
                 val destinationsResponse: DestinationsResponse = response.body()
                 val destinationsList = destinationsResponse.popularDestinations.destinations
-                println("Destinations fetched: ${destinationsList.size}")
                 Result.Success(Destinations(items = destinationsList))
             }
         } catch (e: Exception) {

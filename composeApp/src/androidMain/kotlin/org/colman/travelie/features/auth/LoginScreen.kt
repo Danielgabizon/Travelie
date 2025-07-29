@@ -50,8 +50,8 @@ fun LoginScreen(
             painter = painterResource(id = R.drawable.satic_logo),
             contentDescription = "App Logo",
             modifier = Modifier
-                .size(256.dp)
-                .padding(bottom = 24.dp)
+                .size(200.dp)
+                .padding(bottom = 8.dp)
         )
         Card(
             shape = RoundedCornerShape(20.dp),

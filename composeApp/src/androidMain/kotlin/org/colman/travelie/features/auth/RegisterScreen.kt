@@ -4,7 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,25 +28,29 @@ import org.colman.travelie.ui.theme.*
 
 
 
-
 @Composable
 fun RegisterScreen(
     viewModel: AuthViewModel,
     onNavigateToLogin: () -> Unit,
-
 ) {
     val uiState = viewModel.uiState.collectAsState().value
+    val scrollState = rememberScrollState()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
+    var bio by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .background(LightGray)
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -52,9 +58,10 @@ fun RegisterScreen(
             painter = painterResource(id = R.drawable.satic_logo),
             contentDescription = "App Logo",
             modifier = Modifier
-                .size(256.dp)
-                .padding(bottom = 24.dp)
+                .size(200.dp)
+                .padding(bottom = 8.dp)
         )
+
         Card(
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(4.dp),
@@ -62,9 +69,11 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(24.dp)) {
-                Text("Register", fontSize = 24.sp, color = Navy,modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text("Register", fontSize = 24.sp, color = Navy, modifier = Modifier.align(Alignment.CenterHorizontally))
 
                 Spacer(modifier = Modifier.height(16.dp))
+
+
 
                 OutlinedTextField(
                     value = email,
@@ -97,19 +106,83 @@ fun RegisterScreen(
                     )
                 )
 
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = firstName,
+                        onValueChange = { firstName = it.trim() },
+                        label = { Text("First Name") },
+                        singleLine = true,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Terracotta,
+                            unfocusedBorderColor = Lavender,
+                            cursorColor = Terracotta
+                        )
+                    )
+
+                    OutlinedTextField(
+                        value = lastName,
+                        onValueChange = { lastName = it.trim() },
+                        label = { Text("Last Name") },
+                        singleLine = true,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Terracotta,
+                            unfocusedBorderColor = Lavender,
+                            cursorColor = Terracotta
+                        )
+                    )
+                }
+
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = bio,
+                    onValueChange = { bio = it },
+                    label = { Text("Bio (optional)") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Terracotta,
+                        unfocusedBorderColor = Lavender,
+                        cursorColor = Terracotta
+                    )
+                )
+
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
-                    onClick = { viewModel.register(email.trim(), password.trim()) },
+                    onClick = {
+                        viewModel.register(
+                            email = email,
+                            password = password,
+                            firstName = firstName,
+                            lastName = lastName,
+                            bio = bio
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = email.isNotBlank() && password.isNotBlank(),
+                    enabled = email.isNotBlank() && password.isNotBlank() &&
+                            firstName.isNotBlank() && lastName.isNotBlank(),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Terracotta,
                         contentColor = Color.White,
                         disabledContainerColor = Beige,
-                        disabledContentColor = Navy.copy(alpha = 0.3f)))
-                {
+                        disabledContentColor = Navy.copy(alpha = 0.3f)
+                    )
+                ) {
                     Text("Register", color = Color.White)
                 }
 
@@ -118,10 +191,9 @@ fun RegisterScreen(
                 Text(
                     buildAnnotatedString {
                         append("Already have an account? ")
-
                         withStyle(
                             style = SpanStyle(
-                                color = Terracotta, // your highlight color
+                                color = Terracotta,
                                 fontWeight = FontWeight.Bold
                             )
                         ) {
@@ -131,12 +203,11 @@ fun RegisterScreen(
                     modifier = Modifier
                         .clickable { onNavigateToLogin() }
                         .align(Alignment.CenterHorizontally),
-                    color = Navy // base color for other text
+                    color = Navy
                 )
-
             }
-
         }
+
         Spacer(modifier = Modifier.height(32.dp))
 
         when (uiState) {
@@ -145,7 +216,5 @@ fun RegisterScreen(
             else -> {}
         }
     }
-
 }
-
 

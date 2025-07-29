@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
                     if (user != null && selectedTab == null) {
                         selectedTab = defaultTab
                         navController.navigate(Routes.MAIN_GRAPH) {
-                            popUpTo("auth_graph") { inclusive = true }
+                            popUpTo(Routes.AUTH_GRAPH) { inclusive = true }
                         }
                     } else if (user == null) {
                         selectedTab = null

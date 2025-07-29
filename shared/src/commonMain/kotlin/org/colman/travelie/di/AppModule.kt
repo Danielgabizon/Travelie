@@ -64,9 +64,6 @@ val commonModule = module {
 
     single { createHttpClient(get(), get()) }
 
-//    single { AppDatabase(get()) }
-//    single { get<AppDatabase>().moviesQueries }
-//    single { MovieDao(get()) }
 }
 
 fun createJson(): Json {

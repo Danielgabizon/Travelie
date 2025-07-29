@@ -26,10 +26,12 @@ class AuthViewModel(
         }
     }
 
-    fun register(email: String, password: String) {
+    fun register(email: String, password: String,
+                 firstName: String, lastName: String, bio: String) {
         _uiState.value = AuthState.Loading
         scope.launch {
-            when (val result = useCases.register(email, password)) {
+            when (val result = useCases.register(email, password,
+                firstName, lastName, bio)) {
                 is Result.Success -> _uiState.emit(AuthState.Loaded(result.data))
                 is Result.Failure -> _uiState.emit(
                     AuthState.Error(

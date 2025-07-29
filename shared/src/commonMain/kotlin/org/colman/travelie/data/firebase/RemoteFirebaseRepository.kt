@@ -5,13 +5,15 @@ import org.colman.travelie.data.Error
 import org.colman.travelie.data.Result
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
-//import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.firestore.firestore
 data class AuthError(
     override val message: String
 ) : Error
 
 class RemoteFirebaseRepository : FirebaseRepository {
     private val auth = Firebase.auth
+    private val firestore = Firebase.firestore
+    private val usersCollection = firestore.collection("users")
 
     override suspend fun login(email: String, password: String): Result<User, AuthError> {
         return try {
@@ -19,35 +21,42 @@ class RemoteFirebaseRepository : FirebaseRepository {
             val currentUser = auth.currentUser
 
             if (currentUser != null) {
-                Result.Success(
-                    User(
-                        uid = currentUser.uid,
-                        email = currentUser.email ?: "",
-                        displayName = currentUser.displayName ?: ""
-                    )
-                )
+                val userDoc = usersCollection.document(currentUser.uid).get()
+                val user = userDoc.data<User>()
+
+                Result.Success(user)
             } else {
                 Result.Failure(AuthError("Login failed: user is null"))
             }
         } catch (e: Exception) {
             Result.Failure(AuthError("Login error: ${e.message ?: "Unknown error"}"))
         }
-
     }
 
-    override suspend fun register(email: String, password: String): Result<User, AuthError> {
+
+    override suspend fun register(
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String,
+        bio: String
+    ): Result<User, AuthError> {
         return try {
             auth.createUserWithEmailAndPassword(email, password)
             val currentUser = auth.currentUser
 
             if (currentUser != null) {
-                Result.Success(
-                    User(
-                        uid = currentUser.uid,
-                        email = currentUser.email ?: "",
-                        displayName = currentUser.displayName ?: ""
-                    )
+                val newUser = User(
+                    uid = currentUser.uid,
+                    email = currentUser.email ?: "",
+                    firstName = firstName,
+                    lastName = lastName,
+                    bio = bio,
+                    profilePicture = null
                 )
+
+                usersCollection.document(currentUser.uid).set(newUser)
+                Result.Success(newUser)
             } else {
                 Result.Failure(AuthError("Registration failed: user is null"))
             }
@@ -55,6 +64,7 @@ class RemoteFirebaseRepository : FirebaseRepository {
             Result.Failure(AuthError("Registration error: ${e.message ?: "Unknown error"}"))
         }
     }
+
     override suspend fun logout(): Result<Unit, AuthError> {
         return try {
             auth.signOut()
@@ -67,17 +77,16 @@ class RemoteFirebaseRepository : FirebaseRepository {
     override suspend fun getCurrentUser(): Result<User, AuthError> {
         val currentUser = auth.currentUser
         return if (currentUser != null) {
-            Result.Success(
-                User(
-                    uid = currentUser.uid,
-                    email = currentUser.email ?: "",
-                    displayName = currentUser.displayName ?: ""
-                )
-            )
+            try {
+                val userDoc = usersCollection.document(currentUser.uid).get()
+                val user = userDoc.data<User>()
+
+                Result.Success(user)
+            } catch (e: Exception) {
+                Result.Failure(AuthError("Error fetching user data: ${e.message}"))
+            }
         } else {
             Result.Failure(AuthError("No authenticated user"))
         }
     }
-
-
 }

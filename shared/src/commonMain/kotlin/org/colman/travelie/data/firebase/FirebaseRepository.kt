@@ -4,7 +4,7 @@ import org.colman.travelie.models.User
 
 interface FirebaseRepository {
     suspend fun login(email: String, password: String): Result<User, AuthError>
-    suspend fun register(email: String, password: String): Result<User, AuthError>
+    suspend fun register(email: String, password: String,firstName:String,lastName:String,bio:String): Result<User, AuthError>
     suspend fun logout(): Result<Unit, AuthError>
     suspend fun getCurrentUser(): Result<User, AuthError>
 
