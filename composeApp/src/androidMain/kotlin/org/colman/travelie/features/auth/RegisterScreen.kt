@@ -52,28 +52,33 @@ fun RegisterScreen(
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Image(
             painter = painterResource(id = R.drawable.satic_logo),
             contentDescription = "App Logo",
             modifier = Modifier
                 .size(200.dp)
-                .padding(bottom = 8.dp)
         )
 
         Card(
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(4.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            Column(modifier = Modifier.padding(24.dp).fillMaxWidth()
+            Column(
+                modifier = Modifier.
+                fillMaxWidth().
+                padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+
             ) {
-                Text("Register", fontSize = 24.sp, color = Navy, modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text("Register",
+                    fontSize = 24.sp,
+                    color = Navy)
 
                 Spacer(modifier = Modifier.height(16.dp))
-
-
 
                 OutlinedTextField(
                     value = email,
@@ -108,7 +113,11 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.
+                    fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically){
                     OutlinedTextField(
                         value = firstName,
                         onValueChange = { firstName = it.trim() },
@@ -201,8 +210,7 @@ fun RegisterScreen(
                         }
                     },
                     modifier = Modifier
-                        .clickable { onNavigateToLogin() }
-                        .align(Alignment.CenterHorizontally),
+                        .clickable { onNavigateToLogin() },
                     color = Navy
                 )
             }

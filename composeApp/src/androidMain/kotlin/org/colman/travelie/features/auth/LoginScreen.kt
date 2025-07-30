@@ -42,25 +42,31 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Image(
             painter = painterResource(id = R.drawable.satic_logo),
             contentDescription = "App Logo",
             modifier = Modifier
                 .size(200.dp)
-                .padding(bottom = 8.dp)
         )
         Card(
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(4.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text("Login",
                     fontSize = 24.sp,
                     color = Navy,
-                    modifier = Modifier.align(Alignment.CenterHorizontally))
+                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -68,8 +74,8 @@ fun LoginScreen(
                     value = email,
                     onValueChange = { email = it.trim() },
                     label = { Text("Email") },
-                    singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Terracotta,
@@ -126,10 +132,8 @@ fun LoginScreen(
                             append("Register")
                         }
                     },
-                    modifier = Modifier
-                        .clickable { onNavigateToRegister() }
-                        .align(Alignment.CenterHorizontally),
-                    color = Navy // base color for other text
+                    modifier = Modifier.clickable { onNavigateToRegister() },
+                    color = Navy
                 )
 
 
