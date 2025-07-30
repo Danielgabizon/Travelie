@@ -6,6 +6,8 @@ import org.colman.travelie.data.Result
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
+import org.colman.travelie.models.AuthUser
+
 data class AuthError(
     override val message: String
 ) : Error
@@ -15,55 +17,42 @@ class RemoteFirebaseRepository : FirebaseRepository {
     private val firestore = Firebase.firestore
     private val usersCollection = firestore.collection("users")
 
-    override suspend fun login(email: String, password: String): Result<User, AuthError> {
+    override suspend fun login(email: String, password: String): Result<AuthUser, AuthError> {
         return try {
             auth.signInWithEmailAndPassword(email, password)
-            val currentUser = auth.currentUser
 
-            if (currentUser != null) {
-                val userDoc = usersCollection.document(currentUser.uid).get()
-                val user = userDoc.data<User>()
+            val firebaseUser = auth.currentUser ?: return Result.Failure(AuthError("User is null"))
 
-                Result.Success(user)
-            } else {
-                Result.Failure(AuthError("Login failed: user is null"))
-            }
+            val authUser = AuthUser(
+                uid = firebaseUser.uid,
+                email = firebaseUser.email.orEmpty()
+            )
+
+            Result.Success(authUser)
+
         } catch (e: Exception) {
             Result.Failure(AuthError("Login error: ${e.message ?: "Unknown error"}"))
         }
     }
 
-
-    override suspend fun register(
-        email: String,
-        password: String,
-        firstName: String,
-        lastName: String,
-        bio: String
-    ): Result<User, AuthError> {
+    override suspend fun register(email: String, password: String): Result<AuthUser, AuthError> {
         return try {
+
             auth.createUserWithEmailAndPassword(email, password)
-            val currentUser = auth.currentUser
+            val firebaseUser = auth.currentUser ?: return Result.Failure(AuthError("User is null"))
 
-            if (currentUser != null) {
-                val newUser = User(
-                    uid = currentUser.uid,
-                    email = currentUser.email ?: "",
-                    firstName = firstName,
-                    lastName = lastName,
-                    bio = bio,
-                    profilePicture = null
-                )
+            val authUser = AuthUser(
+                uid = firebaseUser.uid,
+                email = firebaseUser.email.orEmpty()
+            )
 
-                usersCollection.document(currentUser.uid).set(newUser)
-                Result.Success(newUser)
-            } else {
-                Result.Failure(AuthError("Registration failed: user is null"))
-            }
+            Result.Success(authUser)
+
         } catch (e: Exception) {
             Result.Failure(AuthError("Registration error: ${e.message ?: "Unknown error"}"))
         }
     }
+
 
     override suspend fun logout(): Result<Unit, AuthError> {
         return try {
@@ -74,19 +63,13 @@ class RemoteFirebaseRepository : FirebaseRepository {
         }
     }
 
-    override suspend fun getCurrentUser(): Result<User, AuthError> {
-        val currentUser = auth.currentUser
-        return if (currentUser != null) {
-            try {
-                val userDoc = usersCollection.document(currentUser.uid).get()
-                val user = userDoc.data<User>()
-
-                Result.Success(user)
-            } catch (e: Exception) {
-                Result.Failure(AuthError("Error fetching user data: ${e.message}"))
-            }
-        } else {
-            Result.Failure(AuthError("No authenticated user"))
+    override suspend fun saveUser(user: User): Result<User, AuthError> {
+        return try {
+            usersCollection.document(user.uid).set(user)
+            Result.Success(user)
+        } catch (e: Exception) {
+            Result.Failure(AuthError("Save user error: ${e.message ?: "Unknown error"}"))
         }
     }
+
 }

@@ -7,8 +7,10 @@ import org.colman.travelie.domain.Destinations.GetDestinations
 import org.colman.travelie.domain.Auth.Login
 import org.colman.travelie.domain.Auth.Register
 import org.colman.travelie.domain.Auth.Logout
+import org.colman.travelie.domain.User.SaveUser
 import org.colman.travelie.features.destinations.DestinationsUseCases
 import org.colman.travelie.features.auth.AuthUseCases
+import org.colman.travelie.features.user.UserUseCases
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -26,6 +28,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.bind
 import org.koin.dsl.module
+
 
 
 fun initKoin(config: KoinAppDeclaration? = null) {
@@ -52,8 +55,11 @@ val domainModule = module {
     factoryOf(::Register)
     factoryOf(::Logout)
 
+    factoryOf(::SaveUser)
+
     factoryOf(::DestinationsUseCases)
     factoryOf(::AuthUseCases)
+    factoryOf(::UserUseCases)
 
 }
 
