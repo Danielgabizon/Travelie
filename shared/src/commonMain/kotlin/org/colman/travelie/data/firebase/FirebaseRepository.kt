@@ -9,6 +9,7 @@ interface FirebaseRepository {
     suspend fun register(email: String, password: String): Result<AuthUser, AuthError>
     suspend fun logout(): Result<Unit, AuthError>
     // User management methods
-    suspend fun saveUser(user: User): Result<User, AuthError>
+    suspend fun saveUser(user: User): Result<User, UserError>
+    suspend fun getUserDetails(uid: String): Result<User, UserError>
 
 }

@@ -33,10 +33,9 @@ class AuthViewModel(
                  firstName: String, lastName: String, bio: String) {
         _uiState.value = AuthState.Loading
         scope.launch {
-            when (val result = authUseCases.register(email, password,)) {
+            when (val result = authUseCases.register(email, password)) {
                 is Result.Success -> {
                     val authUser = result.data!!
-
                     // save user in user DB
                    userUseCases.saveUser(
                       User(
@@ -46,7 +45,6 @@ class AuthViewModel(
                         lastName = lastName,
                         bio = bio)
                     )
-
                     _uiState.emit(AuthState.Loaded(authUser))
 
                 }

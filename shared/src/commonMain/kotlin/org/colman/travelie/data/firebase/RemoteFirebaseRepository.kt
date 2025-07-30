@@ -11,6 +11,11 @@ import org.colman.travelie.models.AuthUser
 data class AuthError(
     override val message: String
 ) : Error
+data class UserError(
+    override val message: String
+) : Error
+
+
 
 class RemoteFirebaseRepository : FirebaseRepository {
     private val auth = Firebase.auth
@@ -63,12 +68,26 @@ class RemoteFirebaseRepository : FirebaseRepository {
         }
     }
 
-    override suspend fun saveUser(user: User): Result<User, AuthError> {
+    override suspend fun saveUser(user: User): Result<User, UserError> {
         return try {
             usersCollection.document(user.uid).set(user)
             Result.Success(user)
         } catch (e: Exception) {
-            Result.Failure(AuthError("Save user error: ${e.message ?: "Unknown error"}"))
+            Result.Failure(UserError("Save user error: ${e.message ?: "Unknown error"}"))
+        }
+    }
+    override suspend fun getUserDetails(uid: String): Result<User, UserError> {
+        return try {
+            val document = usersCollection.document(uid).get()
+
+            if (document.exists) {
+                val user = document.data<User>()
+                Result.Success(user)
+            } else {
+                Result.Failure(UserError("User not found"))
+            }
+        } catch (e: Exception) {
+            Result.Failure(UserError("Get user details error: ${e.message ?: "Unknown error"}"))
         }
     }
 
