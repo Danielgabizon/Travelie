@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.Image
 import androidx.compose.ui.text.SpanStyle
@@ -45,7 +44,6 @@ fun LoginScreen(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-
         Image(
             painter = painterResource(id = R.drawable.satic_logo),
             contentDescription = "App Logo",
@@ -57,9 +55,8 @@ fun LoginScreen(
             shape = RoundedCornerShape(20.dp),
             elevation = CardDefaults.cardElevation(4.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(24.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
                 Text("Login",
                     fontSize = 24.sp,
                     color = Navy,

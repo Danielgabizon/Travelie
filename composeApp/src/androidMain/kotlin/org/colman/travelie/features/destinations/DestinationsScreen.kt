@@ -83,9 +83,10 @@ fun DestinationsScreen(
 
 
         when (uiState) {
-            is DestinationsState.Error -> Error(uiState.errorMessage,Modifier.fillMaxSize())
+            is DestinationsState.Loading -> Spinner(Modifier.fillMaxSize())
             is DestinationsState.Loaded -> DestinationsContent(uiState.destinations)
-            DestinationsState.Loading -> Spinner(Modifier.fillMaxSize())
+            is DestinationsState.Error -> Error(uiState.errorMessage,Modifier.fillMaxSize())
+
         }
     }
 }

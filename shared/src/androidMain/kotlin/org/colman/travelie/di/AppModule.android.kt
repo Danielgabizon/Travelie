@@ -1,10 +1,9 @@
 package org.colman.travelie.di
 
-import android.content.Context
 import org.koin.core.module.Module
-
 import org.colman.travelie.features.destinations.DestinationsViewModel
 import org.colman.travelie.features.auth.AuthViewModel
+import org.colman.travelie.features.user.UserViewModel
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
 import org.colman.travelie.utils.GeoDecoder
@@ -19,6 +18,7 @@ actual val platformModule: Module = module {
 
     viewModelOf(::DestinationsViewModel)
     viewModelOf(::AuthViewModel)
+    viewModelOf(::UserViewModel)
     single { LocationProvider(androidContext()) }
     single { GeoDecoder(androidContext()) }
 

@@ -10,14 +10,14 @@ import androidx.core.content.ContextCompat
 
 @Composable
 fun HandleLocationPermission(
-    onPermissionGranted: () -> Unit
+    launchSearch: () -> Unit
 ) {
     val context = LocalContext.current
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            if (isGranted) onPermissionGranted()
+        onResult = { _ ->
+            launchSearch()
         }
     )
 
@@ -27,7 +27,7 @@ fun HandleLocationPermission(
             Manifest.permission.ACCESS_FINE_LOCATION
         )
         if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
-            onPermissionGranted()
+            launchSearch()
         } else {
             permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }

@@ -6,7 +6,9 @@ object Routes {
     const val REGISTER = "register"
 
 
+
     const val MAIN_GRAPH = "main_graph"
+    const val PROFILE = "profile"
     const val DESTINATIONS = "destinations"
     const val LOGOUT = "logout"
 }

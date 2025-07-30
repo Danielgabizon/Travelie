@@ -24,5 +24,6 @@ fun NavGraphBuilder.authNestedGraph(authViewModel: AuthViewModel,
                 onNavigateToLogin = { navController.navigate(Routes.LOGIN) },
             )
         }
+
     }
 }
