@@ -79,12 +79,15 @@ fun ProfileScreen(
 fun ProfileContent(user: User?) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RectangleShape
+        shape = RectangleShape,
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
-        Box(modifier = Modifier.padding(24.dp)) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start,
+                modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
             ) {
 
                 Image(
@@ -93,14 +96,15 @@ fun ProfileContent(user: User?) {
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
+                        .weight(0.3f, fill = false)
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Column(
+                    modifier = Modifier.weight(0.7f),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.Start,
-                    modifier = Modifier.weight(1f)
                 ) {
                     Text(
                         text = "${user?.firstName ?: "First Name"} ${user?.lastName ?: "Last Name"}",
@@ -118,7 +122,7 @@ fun ProfileContent(user: User?) {
                     )
                 }
             }
-        }
+
 
     }
     Posts(
