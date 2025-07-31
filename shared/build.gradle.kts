@@ -12,6 +12,9 @@ plugins {
 }
 
 kotlin {
+    compilerOptions{
+        freeCompilerArgs.add("-Xexpect-actual-calsses")
+    }
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {

@@ -7,6 +7,7 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
 import org.colman.travelie.models.AuthUser
+import org.colman.travelie.models.post
 
 data class AuthError(
     override val message: String
@@ -14,6 +15,9 @@ data class AuthError(
 data class UserError(
     override val message: String
 ) : Error
+data class PostError(
+    override val message: String
+): Error
 
 
 
@@ -21,7 +25,7 @@ class RemoteFirebaseRepository : FirebaseRepository {
     private val auth = Firebase.auth
     private val firestore = Firebase.firestore
     private val usersCollection = firestore.collection("users")
-
+    private val postsCollection = firestore.collection("posts")
     override suspend fun login(email: String, password: String): Result<AuthUser, AuthError> {
         return try {
             auth.signInWithEmailAndPassword(email, password)
@@ -90,5 +94,17 @@ class RemoteFirebaseRepository : FirebaseRepository {
             Result.Failure(UserError("Get user details error: ${e.message ?: "Unknown error"}"))
         }
     }
+
+    override suspend fun addPost(post: post): Result<Unit, PostError> {
+        return try {
+            val postRef = postsCollection.document(post.postId)
+            postRef.set(post)
+
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Failure(PostError("Post upload error: ${e.message ?: "Unknown error"}"))
+        }
+    }
+
 
 }
