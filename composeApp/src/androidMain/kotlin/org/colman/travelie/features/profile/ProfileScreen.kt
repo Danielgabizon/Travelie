@@ -1,10 +1,7 @@
 package org.colman.travelie.features.profile
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -12,7 +9,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,15 +19,12 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.colman.travelie.R
 import org.colman.travelie.features.auth.AuthState
 import org.colman.travelie.features.auth.AuthViewModel
-import org.colman.travelie.features.user.UserState
-import org.colman.travelie.features.user.UserViewModel
 import org.colman.travelie.models.Destination
 import org.colman.travelie.models.Destinations
 import org.colman.travelie.models.User
@@ -40,19 +33,24 @@ import org.colman.travelie.ui.shared_components.Spinner
 import org.colman.travelie.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
+
+
 @Composable
 fun ProfileScreen(
     authViewModel: AuthViewModel,
-    userViewModel: UserViewModel = koinViewModel()
+    profileViewModel: ProfileViewModel = koinViewModel()
 ) {
     val authState = authViewModel.uiState.collectAsState().value
-    val userUIState = userViewModel.uiState.collectAsState().value
     val authUser = (authState as? AuthState.Loaded)?.user
     val uid = authUser?.uid
 
+
+    val uiState = profileViewModel.uiState.collectAsState().value
+
+
     LaunchedEffect(uid) {
         if (uid != null) {
-            userViewModel.getUserDetails(uid)
+            profileViewModel.getUserDetails(uid)
         }
     }
 
@@ -65,11 +63,11 @@ fun ProfileScreen(
     ) {
 
 
-        when (userUIState) {
-            is UserState.Loading -> Spinner(modifier = Modifier.fillMaxSize())
-            is UserState.Loaded -> ProfileContent(userUIState.user)
-            is UserState.Error -> Error(
-                message = userUIState.errorMessage,
+        when (uiState) {
+            is ProfileState.Loading -> Spinner(modifier = Modifier.fillMaxSize())
+            is ProfileState.Loaded -> ProfileContent(uiState.user)
+            is ProfileState.Error -> Error(
+                message = uiState.errorMessage,
                 modifier = Modifier.fillMaxSize()
             )
         }

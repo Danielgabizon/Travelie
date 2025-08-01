@@ -11,7 +11,8 @@ import org.colman.travelie.models.AuthUser
 data class AuthError(
     override val message: String
 ) : Error
-data class UserError(
+
+data class UserDBError(
     override val message: String
 ) : Error
 
@@ -57,6 +58,14 @@ class RemoteFirebaseRepository : FirebaseRepository {
             Result.Failure(AuthError("Registration error: ${e.message ?: "Unknown error"}"))
         }
     }
+    override suspend fun saveUser(user: User): Result<User, UserDBError> {
+        return try {
+            usersCollection.document(user.uid).set(user)
+            Result.Success(user)
+        } catch (e: Exception) {
+            Result.Failure(UserDBError("Save user error: ${e.message ?: "Unknown error"}"))
+        }
+    }
 
 
     override suspend fun logout(): Result<Unit, AuthError> {
@@ -68,15 +77,8 @@ class RemoteFirebaseRepository : FirebaseRepository {
         }
     }
 
-    override suspend fun saveUser(user: User): Result<User, UserError> {
-        return try {
-            usersCollection.document(user.uid).set(user)
-            Result.Success(user)
-        } catch (e: Exception) {
-            Result.Failure(UserError("Save user error: ${e.message ?: "Unknown error"}"))
-        }
-    }
-    override suspend fun getUserDetails(uid: String): Result<User, UserError> {
+
+    override suspend fun getUserDetails(uid: String): Result<User, UserDBError> {
         return try {
             val document = usersCollection.document(uid).get()
 
@@ -84,10 +86,10 @@ class RemoteFirebaseRepository : FirebaseRepository {
                 val user = document.data<User>()
                 Result.Success(user)
             } else {
-                Result.Failure(UserError("User not found"))
+                Result.Failure(UserDBError("User not found"))
             }
         } catch (e: Exception) {
-            Result.Failure(UserError("Get user details error: ${e.message ?: "Unknown error"}"))
+            Result.Failure(UserDBError("Get user details error: ${e.message ?: "Unknown error"}"))
         }
     }
 

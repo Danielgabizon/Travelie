@@ -44,15 +44,7 @@ class RemoteDestinationsRepository(
             if (!response.status.isSuccess()) {
                 val errorText = response.bodyAsText() // get the response body content
                 return Result.Failure(
-                    TDDBError(
-                        message = """
-                Failed to fetch destinations.
-                Code: ${response.status.value}
-                Reason: ${response.status.description}
-                Server response: $errorText
-            """.trimIndent()
-                    )
-                )
+                    TDDBError("Error fetching destinations: ${response.status.value} - $errorText"))
             } else {
                 val destinationsResponse: DestinationsResponse = response.body()
                 val destinationsList = destinationsResponse.popularDestinations.destinations

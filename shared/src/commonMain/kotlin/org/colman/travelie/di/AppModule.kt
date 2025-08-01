@@ -10,8 +10,8 @@ import org.colman.travelie.domain.Auth.Logout
 import org.colman.travelie.domain.User.SaveUser
 import org.colman.travelie.domain.User.GetUserDetails
 import org.colman.travelie.features.destinations.DestinationsUseCases
+import org.colman.travelie.features.profile.ProfileUseCases
 import org.colman.travelie.features.auth.AuthUseCases
-import org.colman.travelie.features.user.UserUseCases
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -52,16 +52,16 @@ val domainModule = module {
 
     factoryOf(::GetDestinations)
 
-    factoryOf(::Login)
     factoryOf(::Register)
+    factoryOf(::SaveUser)
+    factoryOf(::Login)
     factoryOf(::Logout)
 
-    factoryOf(::SaveUser)
     factoryOf(::GetUserDetails)
 
     factoryOf(::DestinationsUseCases)
     factoryOf(::AuthUseCases)
-    factoryOf(::UserUseCases)
+    factoryOf(::ProfileUseCases)
 
 }
 

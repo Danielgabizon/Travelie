@@ -5,12 +5,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.colman.travelie.features.BaseViewModel
 import org.colman.travelie.data.Result
-import org.colman.travelie.features.user.UserUseCases
+import org.colman.travelie.data.firebase.AuthError
+import org.colman.travelie.data.firebase.UserDBError
 import org.colman.travelie.models.User
 
 class AuthViewModel(
     private val authUseCases: AuthUseCases,
-    private val userUseCases: UserUseCases,
 ) : BaseViewModel<AuthState>() {
     private val _uiState: MutableStateFlow<AuthState> = MutableStateFlow(AuthState.Loaded(null))
     override val uiState: StateFlow<AuthState> get() = _uiState
@@ -28,34 +28,45 @@ class AuthViewModel(
             }
         }
     }
-
-    fun register(email: String, password: String,
-                 firstName: String, lastName: String, bio: String) {
+    fun register(
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String,
+        bio: String
+    ) {
         _uiState.value = AuthState.Loading
         scope.launch {
-            when (val result = authUseCases.register(email, password)) {
+            when (val authResult = authUseCases.register(email, password)) {
                 is Result.Success -> {
-                    val authUser = result.data!!
-                    // save user in user DB
-                   userUseCases.saveUser(
-                      User(
-                        uid = authUser.uid,
-                        email = authUser.email,
-                        firstName = firstName,
-                        lastName = lastName,
-                        bio = bio)
-                    )
-                    _uiState.emit(AuthState.Loaded(authUser))
+                    val authUser = authResult.data!!
 
+                    // saving the user in Firestore
+                    when (val saveResult = authUseCases.saveUser(
+                        User(
+                            uid = authUser.uid,
+                            email = authUser.email,
+                            firstName = firstName,
+                            lastName = lastName,
+                            bio = bio
+                        )
+                    )) {
+                        is Result.Success -> {
+                            _uiState.emit(AuthState.Loaded(authUser))
+                        }
+                        is Result.Failure -> {
+                            _uiState.emit(AuthState.Error("Failed to save user data: ${saveResult.error?.message}"))
+                        }
+                    }
                 }
-                is Result.Failure -> _uiState.emit(
-                    AuthState.Error(
-                        result.error?.message ?: "Unknown error"
-                    )
-                )
+
+                is Result.Failure -> {
+                    _uiState.emit(AuthState.Error(authResult.error?.message ?: "Unknown error"))
+                }
             }
         }
     }
+
 
     fun logout() {
         scope.launch {
