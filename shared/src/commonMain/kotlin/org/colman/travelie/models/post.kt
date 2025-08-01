@@ -2,7 +2,7 @@ package org.colman.travelie.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class post(
+data class Post(
     val postId: String,
     val userId: String,
     val userName: String,               // For display without extra query
@@ -11,11 +11,11 @@ data class post(
     val imageUrl: String? = null,
     val timestamp: Long,
 
-    // 🔁 Interaction
+    // Comments and likes Interaction
     val likedBy: List<String> = emptyList(),
     val commentCount: Int = 0,
 
-    // 📍 GPS Integration
+    // GPS Integration
     val latitude: Double? = null,
     val longitude: Double? = null,
     val locationName: String? = null,

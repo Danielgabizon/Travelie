@@ -1,10 +1,10 @@
 package org.colman.travelie.domain.post
 
 import org.colman.travelie.data.firebase.FirebaseRepository
-import org.colman.travelie.models.post
+import org.colman.travelie.models.Post
 
 class AddPost(private val firebaseRepository: FirebaseRepository) {
-    suspend operator fun invoke(post: post) = firebaseRepository.addPost(post)
+    suspend operator fun invoke(post: Post) = firebaseRepository.addPost(post)
 }
 
 //package org.colman.travelie.domain.Post

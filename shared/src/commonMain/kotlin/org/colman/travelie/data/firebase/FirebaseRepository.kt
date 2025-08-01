@@ -2,7 +2,7 @@ package org.colman.travelie.data.firebase
 import org.colman.travelie.data.Result
 import org.colman.travelie.models.AuthUser
 import org.colman.travelie.models.User
-import org.colman.travelie.models.post
+import org.colman.travelie.models.Post
 
 interface FirebaseRepository {
     // Authentication methods
@@ -13,7 +13,7 @@ interface FirebaseRepository {
     suspend fun saveUser(user: User): Result<User, UserError>
     suspend fun getUserDetails(uid: String): Result<User, UserError>
     //Post methods
-    suspend fun addPost(post: post): Result<Unit, PostError>
+    suspend fun addPost(post: Post): Result<Unit, PostError>
 
 
 }

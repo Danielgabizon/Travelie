@@ -7,7 +7,7 @@ import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
 import org.colman.travelie.models.AuthUser
-import org.colman.travelie.models.post
+import org.colman.travelie.models.Post
 
 data class AuthError(
     override val message: String
@@ -95,7 +95,7 @@ class RemoteFirebaseRepository : FirebaseRepository {
         }
     }
 
-    override suspend fun addPost(post: post): Result<Unit, PostError> {
+    override suspend fun addPost(post: Post): Result<Unit, PostError> {
         return try {
             val postRef = postsCollection.document(post.postId)
             postRef.set(post)

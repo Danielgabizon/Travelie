@@ -11,4 +11,6 @@ object Routes {
     const val PROFILE = "profile"
     const val DESTINATIONS = "destinations"
     const val LOGOUT = "logout"
+
+    const val POSTS = "posts"
 }

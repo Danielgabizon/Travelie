@@ -26,6 +26,12 @@ fun BottomNavigationBar(
             label = { Text("Destinations") }
         )
         NavigationBarItem(
+            selected = selectedTab is MainAppTab.Posts,
+            onClick = { onTabSelected(MainAppTab.Posts) },
+            icon = { Icon(Icons.Default.Place, contentDescription = "Posts") }, // Use better icon later
+            label = { Text("Posts") }
+        )
+        NavigationBarItem(
             selected = selectedTab is MainAppTab.Profile,
             onClick = { onTabSelected(MainAppTab.Profile) },
             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
