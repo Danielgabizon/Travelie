@@ -1,9 +1,8 @@
 package org.colman.travelie.ui.shared_components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
@@ -19,6 +18,12 @@ fun BottomNavigationBar(
     onTabSelected: (MainAppTab) -> Unit
 ) {
     NavigationBar {
+        NavigationBarItem(
+            selected = selectedTab is MainAppTab.Feed,
+            onClick = { onTabSelected(MainAppTab.Feed) },
+            icon = { Icon(Icons.Default.Home, contentDescription = "Feed") },
+            label = { Text("Feed") }
+        )
         NavigationBarItem(
             selected = selectedTab is MainAppTab.Destinations,
             onClick = { onTabSelected(MainAppTab.Destinations) },

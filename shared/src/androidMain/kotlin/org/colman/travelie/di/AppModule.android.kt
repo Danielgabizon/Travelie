@@ -4,12 +4,14 @@ import org.koin.core.module.Module
 import org.colman.travelie.features.destinations.DestinationsViewModel
 import org.colman.travelie.features.auth.AuthViewModel
 import org.colman.travelie.features.profile.ProfileViewModel
+import org.colman.travelie.features.feed.FeedViewModel
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
 import org.colman.travelie.utils.GeoDecoder
 import org.colman.travelie.utils.LocationProvider
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
+
 import org.koin.android.ext.koin.androidContext
 
 
@@ -20,6 +22,7 @@ actual val platformModule: Module = module {
     viewModelOf(::DestinationsViewModel)
     viewModelOf(::AuthViewModel)
     viewModelOf(::ProfileViewModel)
+    viewModelOf(::FeedViewModel)
 
 
     single { LocationProvider(androidContext()) }

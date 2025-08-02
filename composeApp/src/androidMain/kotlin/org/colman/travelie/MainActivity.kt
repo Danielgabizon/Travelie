@@ -23,6 +23,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.colman.travelie.ui.navigation.Routes
 
 sealed class MainAppTab(val route: String, val title: String) {
+    data object Feed : MainAppTab(Routes.FEED, "Feed")
     data object Profile : MainAppTab(Routes.PROFILE, "Profile")
     data object Destinations : MainAppTab(Routes.DESTINATIONS, "Destinations")
     data object Logout : MainAppTab(Routes.LOGOUT, "Logout")
