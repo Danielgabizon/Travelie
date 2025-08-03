@@ -1,14 +1,15 @@
-package org.colman.travelie.features.profile
+package org.colman.travelie.features.user
 
 import org.colman.travelie.features.UiState
 import org.colman.travelie.models.User
 
-public sealed class ProfileState: UiState {
-    data object Loading: ProfileState()
+
+public sealed class UserState: UiState {
+    data object Loading: UserState()
     data class Loaded(
         val user: User?,
-    ): ProfileState()
+    ): UserState()
     data class Error(
         var errorMessage: String
-    ): ProfileState()
+    ): UserState()
 }

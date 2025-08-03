@@ -1,6 +1,5 @@
-package org.colman.travelie.domain.Feed
+package org.colman.travelie.domain.Post
 
-import org.colman.travelie.data.destinations.DestinationsRepository
 import org.colman.travelie.data.firebase.FirebaseRepository
 
 class GetPosts (

@@ -30,6 +30,8 @@ class RemoteFirebaseRepository : FirebaseRepository {
     private val usersCollection = firestore.collection("users")
     private val postsCollection = firestore.collection("posts")
 
+
+    /* Authentication methods */
     override suspend fun login(email: String, password: String): Result<AuthUser, AuthError> {
         return try {
             auth.signInWithEmailAndPassword(email, password)
@@ -65,14 +67,6 @@ class RemoteFirebaseRepository : FirebaseRepository {
             Result.Failure(AuthError("Registration error: ${e.message ?: "Unknown error"}"))
         }
     }
-    override suspend fun saveUser(user: User): Result<User, UserDBError> {
-        return try {
-            usersCollection.document(user.uid).set(user)
-            Result.Success(user)
-        } catch (e: Exception) {
-            Result.Failure(UserDBError("Save user error: ${e.message ?: "Unknown error"}"))
-        }
-    }
 
 
     override suspend fun logout(): Result<Unit, AuthError> {
@@ -84,10 +78,26 @@ class RemoteFirebaseRepository : FirebaseRepository {
         }
     }
 
+    /* User methods */
 
-    override suspend fun getUserDetails(uid: String): Result<User, UserDBError> {
+    override suspend fun saveUser(user: User): Result<User, UserDBError> {
         return try {
-            val document = usersCollection.document(uid).get()
+            usersCollection
+                .document(user.uid)
+                .set(user)
+            Result.Success(user)
+        } catch (e: Exception) {
+            Result.Failure(UserDBError("Save user error: ${e.message ?: "Unknown error"}"))
+        }
+    }
+
+
+    override suspend fun getUser(uid: String): Result<User, UserDBError> {
+        return try {
+            val document =
+                usersCollection
+                    .document(uid)
+                    .get()
 
             if (document.exists) {
                 val user = document.data<User>()
@@ -100,13 +110,32 @@ class RemoteFirebaseRepository : FirebaseRepository {
         }
     }
 
+    /* Post methods */
+
     override suspend fun getPosts(): Result<Posts, PostDBError> {
         return try {
-            val snapshot = postsCollection.get()
+            val snapshot =
+                postsCollection
+                    .get()
             val posts = snapshot.documents.map { it.data<Post>() }
             Result.Success(Posts(items = posts))
         } catch (e: Exception) {
             Result.Failure(PostDBError("Get posts error: ${e.message ?: "Unknown error"}"))
+        }
+    }
+    override suspend fun createPost(post: Post): Result<Post, PostDBError> {
+        return try {
+            if (post.uid.isBlank()) {
+                return Result.Failure(PostDBError("Post missing creator uid"))
+            }
+
+            val docRef = postsCollection.add(post)
+            val savedPost = post.copy(postId = docRef.id)
+
+            Result.Success(savedPost)
+
+        } catch (e: Exception) {
+            Result.Failure(PostDBError("Create post error: ${e.message ?: "Unknown error"}"))
         }
     }
 

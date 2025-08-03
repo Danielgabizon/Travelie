@@ -7,7 +7,7 @@ import org.colman.travelie.models.User
 public sealed class AuthState: UiState {
     data object Loading: AuthState()
     data class Loaded(
-        val user: AuthUser?
+        val user: User?
     ): AuthState()
     data class Error(
         var errorMessage: String

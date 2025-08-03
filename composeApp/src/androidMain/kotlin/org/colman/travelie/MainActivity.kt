@@ -101,7 +101,9 @@ class MainActivity : ComponentActivity() {
                             authViewModel = authViewModel,
                             navController = navController
                         )
-                        mainAppNestedGraph(authViewModel= authViewModel)
+                        mainAppNestedGraph(authViewModel= authViewModel,
+                            navController = navController
+                        )
                     }
                 }
             }

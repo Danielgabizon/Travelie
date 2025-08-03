@@ -17,9 +17,23 @@ class AuthViewModel(
     fun login(email: String, password: String) {
         scope.launch {
             _uiState.emit(AuthState.Loading)
-            val result = authUseCases.login(email, password)
-            when (result) {
-                is Result.Success -> _uiState.emit(AuthState.Loaded(result.data))
+            when (val result = authUseCases.login(email, password)) {
+                is Result.Success -> {
+                    val authUser = result.data!!
+                        // fetch user data from Firestore
+                        when (val userResult = authUseCases.getUser(authUser.uid)) {
+                            is Result.Success -> {
+                                _uiState.emit(AuthState.Loaded(userResult.data))
+                            }
+                            is Result.Failure -> {
+                                _uiState.emit(
+                                    AuthState.Error(
+                                        userResult.error?.message ?: "Failed to fetch user data"
+                                    )
+                                )
+                            }
+                        }
+                    }
                 is Result.Failure -> _uiState.emit(
                     AuthState.Error(
                         result.error?.message ?: "Unknown error"
@@ -40,22 +54,20 @@ class AuthViewModel(
             when (val authResult = authUseCases.register(email, password)) {
                 is Result.Success -> {
                     val authUser = authResult.data!!
-
-                    // saving the user in Firestore
-                    when (val saveResult = authUseCases.saveUser(
-                        User(
-                            uid = authUser.uid,
-                            email = authUser.email,
-                            firstName = firstName,
-                            lastName = lastName,
-                            bio = bio
-                        )
-                    )) {
+                    val userToSave = User(
+                        uid = authUser.uid,
+                        email = authUser.email,
+                        firstName = firstName,
+                        lastName = lastName,
+                        bio = bio
+                    )
+                    // save user data to Firestore
+                    when (val saveResult = authUseCases.saveUser(userToSave)) {
                         is Result.Success -> {
-                            _uiState.emit(AuthState.Loaded(authUser))
+                            _uiState.emit(AuthState.Loaded(userToSave))
                         }
                         is Result.Failure -> {
-                            _uiState.emit(AuthState.Error("Failed to save user data: ${saveResult.error?.message}"))
+                            _uiState.emit(AuthState.Error(saveResult.error?.message ?: "Unknown error"))
                         }
                     }
                 }
@@ -81,5 +93,6 @@ class AuthViewModel(
             }
         }
     }
+
 
 }

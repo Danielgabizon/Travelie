@@ -54,8 +54,7 @@ fun LoginScreen(
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(4.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier

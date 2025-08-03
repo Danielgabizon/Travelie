@@ -44,7 +44,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.firebase.firestore)
             implementation(libs.firebase.common)
-           implementation(libs.firebase.auth)
+            implementation(libs.firebase.auth)
             implementation(project.dependencies.platform(libs.firebase.bom))
             api(libs.koin.core)
             implementation(libs.koin.compose)

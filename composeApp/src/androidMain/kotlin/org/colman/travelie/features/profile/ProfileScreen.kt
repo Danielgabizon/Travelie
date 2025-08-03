@@ -25,6 +25,7 @@ import coil.compose.AsyncImage
 import org.colman.travelie.R
 import org.colman.travelie.features.auth.AuthState
 import org.colman.travelie.features.auth.AuthViewModel
+import org.colman.travelie.features.user.UserState
 import org.colman.travelie.models.Destination
 import org.colman.travelie.models.Destinations
 import org.colman.travelie.models.User
@@ -38,21 +39,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ProfileScreen(
     authViewModel: AuthViewModel,
-    profileViewModel: ProfileViewModel = koinViewModel()
 ) {
     val authState = authViewModel.uiState.collectAsState().value
-    val authUser = (authState as? AuthState.Loaded)?.user
-    val uid = authUser?.uid
-
-
-    val uiState = profileViewModel.uiState.collectAsState().value
-
-
-    LaunchedEffect(uid) {
-        if (uid != null) {
-            profileViewModel.getUserDetails(uid)
-        }
-    }
+    val user = (authState as? AuthState.Loaded)?.user
 
     Column(
         modifier = Modifier
@@ -62,15 +51,7 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.Top
     ) {
 
-
-        when (uiState) {
-            is ProfileState.Loading -> Spinner(modifier = Modifier.fillMaxSize())
-            is ProfileState.Loaded -> ProfileContent(uiState.user)
-            is ProfileState.Error -> Error(
-                message = uiState.errorMessage,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        ProfileContent(user = user)
     }
 }
 @Composable
@@ -128,6 +109,7 @@ fun ProfileContent(user: User?) {
         lazyGridState = rememberLazyGridState()
     )
 }
+
 
 @Composable
 fun Posts(

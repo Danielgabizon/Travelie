@@ -8,12 +8,13 @@ import org.colman.travelie.domain.Auth.Login
 import org.colman.travelie.domain.Auth.Register
 import org.colman.travelie.domain.Auth.Logout
 import org.colman.travelie.domain.User.SaveUser
-import org.colman.travelie.domain.User.GetUserDetails
-import org.colman.travelie.domain.Feed.GetPosts
+import org.colman.travelie.domain.User.GetUser
+import org.colman.travelie.domain.Post.GetPosts
+import org.colman.travelie.domain.Post.CreatePost
 import org.colman.travelie.features.destinations.DestinationsUseCases
-import org.colman.travelie.features.profile.ProfileUseCases
 import org.colman.travelie.features.auth.AuthUseCases
 import org.colman.travelie.features.feed.FeedUseCases
+import org.colman.travelie.features.uploadPost.UploadPostUseCases
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -55,17 +56,20 @@ val domainModule = module {
     factoryOf(::GetDestinations)
 
     factoryOf(::Register)
-    factoryOf(::SaveUser)
     factoryOf(::Login)
     factoryOf(::Logout)
 
-    factoryOf(::GetUserDetails)
+    factoryOf(::SaveUser)
+    factoryOf(::GetUser)
+
     factoryOf(::GetPosts)
+
+    factoryOf(::CreatePost)
 
     factoryOf(::DestinationsUseCases)
     factoryOf(::AuthUseCases)
-    factoryOf(::ProfileUseCases)
     factoryOf(::FeedUseCases)
+    factoryOf(::UploadPostUseCases)
 
 }
 

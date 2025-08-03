@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,29 +29,40 @@ import org.colman.travelie.ui.shared_components.Spinner
 import org.colman.travelie.ui.theme.*
 
 @Composable
-fun FeedScreen(viewModel: FeedViewModel = koinViewModel()) {
+fun FeedScreen(
+    onAddPost: () -> Unit,
+    viewModel: FeedViewModel = koinViewModel()
+) {
     val uiState = viewModel.uiState.collectAsState().value
 
-    LaunchedEffect(Unit) {
-        viewModel.getPosts()
-    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(LightGray)
-            .padding(16.dp)
-    ) {
-
-        when (uiState) {
-            is FeedState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
-            is FeedState.Error -> Error(message = uiState.errorMessage)
-            is FeedState.Loaded -> PostsContent(uiState.posts)
-
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAddPost,
+                shape = RoundedCornerShape(50),
+            ) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "New post")
+            }
+        },
+        containerColor = LightGray,
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .padding(padding)
+            ) {
+                when (uiState) {
+                    is FeedState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
+                    is FeedState.Error -> Error(message = uiState.errorMessage)
+                    is FeedState.Loaded -> PostsContent(uiState.posts)
+                }
             }
         }
-    }
-
+    )
+}
 @Composable
 fun PostsContent(
     posts: Posts,
