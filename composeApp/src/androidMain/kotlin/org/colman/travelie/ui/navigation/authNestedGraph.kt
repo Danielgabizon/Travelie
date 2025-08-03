@@ -15,13 +15,18 @@ fun NavGraphBuilder.authNestedGraph(authViewModel: AuthViewModel,
         composable(Routes.LOGIN) {
             LoginScreen(
                 viewModel = authViewModel,
-                onNavigateToRegister = { navController.navigate(Routes.REGISTER) },
+                onNavigateToRegister = {
+                    navController.navigate(Routes.REGISTER) {
+                        popUpTo(Routes.LOGIN) { inclusive = true } } },
             )
         }
         composable(Routes.REGISTER) {
             RegisterScreen(
                 viewModel = authViewModel,
-                onNavigateToLogin = { navController.navigate(Routes.LOGIN) },
+                onNavigateToLogin = {
+                    navController.navigate(Routes.LOGIN) {
+                    popUpTo(Routes.LOGIN) { inclusive = true} }
+                                    },
             )
         }
 

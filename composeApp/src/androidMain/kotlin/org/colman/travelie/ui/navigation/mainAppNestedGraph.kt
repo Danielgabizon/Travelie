@@ -19,8 +19,11 @@ fun NavGraphBuilder.mainAppNestedGraph(authViewModel: AuthViewModel,navControlle
             UploadPostScreen(
                 authViewModel = authViewModel,
                 onPostUploaded = {
-                    // go back to feed; optionally you can signal refresh via savedStateHandle here
                     navController.popBackStack()
+                    // refresh feed
+                    navController.navigate(Routes.FEED) {
+                        popUpTo(Routes.FEED) { inclusive = true }
+                    }
                 },
                 onCancel = {
                     // go back to feed

@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
 
                 val navController = rememberNavController()
                 var selectedTab by remember { mutableStateOf<MainAppTab?>(null) }
-                val defaultTab = MainAppTab.Destinations
+                val defaultTab = MainAppTab.Feed
 
                 LaunchedEffect(user) {
                     if (user != null && selectedTab == null) {
@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                     } else if (user == null) {
                         selectedTab = null
                         navController.navigate(Routes.AUTH_GRAPH) {
-                            popUpTo(0) { inclusive = true }
+                            popUpTo(Routes.MAIN_GRAPH) { inclusive = true }
                         }
                     }
                 }
@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
                                     } else {
                                         selectedTab = tab
                                         navController.navigate(tab.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
+                                            popUpTo(Routes.FEED) {
                                                 saveState = true
                                             }
                                             launchSingleTop = true
