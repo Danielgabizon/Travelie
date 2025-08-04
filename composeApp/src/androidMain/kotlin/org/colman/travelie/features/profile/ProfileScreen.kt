@@ -28,6 +28,8 @@ import org.colman.travelie.features.auth.AuthViewModel
 import org.colman.travelie.features.user.UserState
 import org.colman.travelie.models.Destination
 import org.colman.travelie.models.Destinations
+import org.colman.travelie.models.Post
+import org.colman.travelie.models.Posts
 import org.colman.travelie.models.User
 import org.colman.travelie.ui.shared_components.Error
 import org.colman.travelie.ui.shared_components.Spinner
@@ -39,9 +41,19 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ProfileScreen(
     authViewModel: AuthViewModel,
+    profileViewModel: ProfileViewModel
 ) {
     val authState = authViewModel.uiState.collectAsState().value
     val user = (authState as? AuthState.Loaded)?.user
+
+    val uiState = profileViewModel.uiState.collectAsState().value
+
+    LaunchedEffect(user?.uid) {
+        if (user != null) {
+            profileViewModel.getUserPosts(user.uid)
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -52,6 +64,19 @@ fun ProfileScreen(
     ) {
 
         ProfileContent(user = user)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        when (uiState) {
+            is ProfileState.Loading -> Spinner(
+                modifier = Modifier.fillMaxSize()
+            )
+            is ProfileState.Error -> Error(message = uiState.errorMessage,
+                modifier = Modifier.fillMaxSize()
+            )
+            is ProfileState.Loaded -> PostsContent(posts = uiState.userPosts!!)
+
+        }
+
     }
 }
 @Composable
@@ -104,16 +129,13 @@ fun ProfileContent(user: User?) {
 
 
     }
-    Posts(
-        destinations = mockDestinations(),
-        lazyGridState = rememberLazyGridState()
-    )
+
 }
 
 
 @Composable
-fun Posts(
-    destinations: Destinations,
+fun PostsContent(
+    posts: Posts,
     lazyGridState: LazyGridState = rememberLazyGridState()
 ) {
     LazyVerticalGrid(
@@ -125,14 +147,14 @@ fun Posts(
             .fillMaxSize()
 
     ) {
-        items(destinations.items) { destination ->
-            PostItem(destination)
+        items(posts.items) { post ->
+            PostItem(post)
         }
     }
 }
 
 @Composable
-fun PostItem(destination: Destination) {
+fun PostItem(post: Post) {
     val context = LocalContext.current
 
     Box(
@@ -141,8 +163,8 @@ fun PostItem(destination: Destination) {
             .aspectRatio(0.73f)
     ) {
         AsyncImage(
-            model = destination.thumbnail,
-            contentDescription = destination.title,
+            model = post.imageUrl,
+            contentDescription = post.description,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
@@ -150,82 +172,3 @@ fun PostItem(destination: Destination) {
 }
 
 
-
-fun mockDestinations(): Destinations {
-    return Destinations(
-        items = listOf(
-            Destination(
-                title = "Paris, France",
-                description = "Romantic getaway in the city of lights",
-                link = "https://example.com/paris",
-                flightPrice = 350,
-                hotelPrice = 120,
-                thumbnail = "https://images.unsplash.com/photo-1502602898657-3e91760cbb34"
-            ),
-            Destination(
-                title = "Tokyo, Japan",
-                description = "Explore high-tech culture and ancient temples",
-                link = "https://example.com/tokyo",
-                flightPrice = 900,
-                hotelPrice = 200,
-                thumbnail = "https://images.unsplash.com/photo-1549692520-acc6669e2f0c"
-            ),
-            Destination(
-                title = "New York, USA",
-                description = "The city that never sleeps awaits",
-                link = "https://example.com/newyork",
-                flightPrice = 600,
-                hotelPrice = 180,
-                thumbnail = "https://images.unsplash.com/photo-1549924231-f129b911e442"
-            ),
-            Destination(
-                title = "Paris, France",
-                description = "Romantic getaway in the city of lights",
-                link = "https://example.com/paris",
-                flightPrice = 350,
-                hotelPrice = 120,
-                thumbnail = "https://images.unsplash.com/photo-1502602898657-3e91760cbb34"
-            ),
-            Destination(
-                title = "Tokyo, Japan",
-                description = "Explore high-tech culture and ancient temples",
-                link = "https://example.com/tokyo",
-                flightPrice = 900,
-                hotelPrice = 200,
-                thumbnail = "https://images.unsplash.com/photo-1549692520-acc6669e2f0c"
-            ),
-            Destination(
-                title = "New York, USA",
-                description = "The city that never sleeps awaits",
-                link = "https://example.com/newyork",
-                flightPrice = 600,
-                hotelPrice = 180,
-                thumbnail = "https://images.unsplash.com/photo-1549924231-f129b911e442"
-            ),
-            Destination(
-                title = "Paris, France",
-                description = "Romantic getaway in the city of lights",
-                link = "https://example.com/paris",
-                flightPrice = 350,
-                hotelPrice = 120,
-                thumbnail = "https://images.unsplash.com/photo-1502602898657-3e91760cbb34"
-            ),
-            Destination(
-                title = "Tokyo, Japan",
-                description = "Explore high-tech culture and ancient temples",
-                link = "https://example.com/tokyo",
-                flightPrice = 900,
-                hotelPrice = 200,
-                thumbnail = "https://images.unsplash.com/photo-1549692520-acc6669e2f0c"
-            ),
-            Destination(
-                title = "New York, USA",
-                description = "The city that never sleeps awaits",
-                link = "https://example.com/newyork",
-                flightPrice = 600,
-                hotelPrice = 180,
-                thumbnail = "https://images.unsplash.com/photo-1549924231-f129b911e442"
-            ),
-        )
-    )
-}

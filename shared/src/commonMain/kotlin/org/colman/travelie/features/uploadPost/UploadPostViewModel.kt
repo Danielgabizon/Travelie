@@ -26,6 +26,8 @@ class UploadPostViewModel(
     ) {
         scope.launch {
 
+            _uiState.emit(UploadPostState.Loading)
+
             val post = Post(
                 uid = user.uid,
                 creatorName = "${user.firstName} ${user.lastName}",

@@ -12,7 +12,7 @@ import org.colman.travelie.utils.LocationProvider
 class DestinationsViewModel(
     val useCases: DestinationsUseCases,
     private val locationProvider: LocationProvider,
-    private val geoDecoder: GeoDecoder // you'll create this next
+    private val geoDecoder: GeoDecoder
 ) : BaseViewModel<DestinationsState>() {
 
     private val _uiState: MutableStateFlow<DestinationsState> = MutableStateFlow(DestinationsState.Loading)

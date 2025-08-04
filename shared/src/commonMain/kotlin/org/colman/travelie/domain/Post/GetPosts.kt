@@ -5,6 +5,6 @@ import org.colman.travelie.data.firebase.FirebaseRepository
 class GetPosts (
     private val firebaseRepository: FirebaseRepository
 ){
-    suspend operator fun invoke() = firebaseRepository.getPosts()
+    suspend operator fun invoke(uid: String? = null) = firebaseRepository.getPosts(uid)
 
 }

@@ -42,7 +42,7 @@ class RemoteDestinationsRepository(
                 }
             }
             if (!response.status.isSuccess()) {
-                val errorText = response.bodyAsText() // get the response body content
+                val errorText = response.bodyAsText()
                 return Result.Failure(
                     TDDBError("Error fetching destinations: ${response.status.value} - $errorText"))
             } else {

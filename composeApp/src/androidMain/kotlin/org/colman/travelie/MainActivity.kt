@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
 import org.colman.travelie.features.auth.*
 import org.colman.travelie.features.feed.FeedViewModel
+import org.colman.travelie.features.profile.ProfileViewModel
 import org.colman.travelie.ui.navigation.authNestedGraph
 import org.colman.travelie.ui.navigation.mainAppNestedGraph
 import org.colman.travelie.ui.shared_components.BottomNavigationBar
@@ -34,6 +35,7 @@ class MainActivity : ComponentActivity() {
             AppTheme {
                 val authViewModel: AuthViewModel = koinViewModel()
                 val feedViewModel: FeedViewModel = koinViewModel()
+                val profileViewModel: ProfileViewModel = koinViewModel()
 
                 val uiState by authViewModel.uiState.collectAsState()
                 val user = (uiState as? AuthState.Loaded)?.user
@@ -43,7 +45,7 @@ class MainActivity : ComponentActivity() {
                 val currentRoute = navBackStackEntry?.destination?.route
 
 
-                // top bar title based on current route
+                /* top bar title based on current route */
                 val currentTitle = when (currentRoute) {
                     Routes.FEED -> "Feed"
                     Routes.PROFILE -> "Profile"
@@ -51,7 +53,7 @@ class MainActivity : ComponentActivity() {
                     else -> ""
                 }
 
-                // show top & bottom bars based on current route
+                /* show top & bottom bars based on current route */
                 val showBars = currentRoute in listOf(
                     Routes.FEED,
                     Routes.PROFILE,
@@ -113,6 +115,7 @@ class MainActivity : ComponentActivity() {
                         )
                         mainAppNestedGraph(authViewModel= authViewModel,
                             feedViewModel = feedViewModel,
+                            profileViewModel = profileViewModel,
                             navController = navController
                         )
                     }

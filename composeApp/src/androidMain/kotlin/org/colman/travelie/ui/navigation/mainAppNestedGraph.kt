@@ -9,10 +9,11 @@ import org.colman.travelie.features.destinations.DestinationsScreen
 import org.colman.travelie.features.feed.FeedScreen
 import org.colman.travelie.features.feed.FeedViewModel
 import org.colman.travelie.features.profile.ProfileScreen
+import org.colman.travelie.features.profile.ProfileViewModel
 import org.colman.travelie.features.uploadPost.UploadPostScreen
 import org.koin.androidx.compose.koinViewModel
 
-fun NavGraphBuilder.mainAppNestedGraph(authViewModel: AuthViewModel, feedViewModel: FeedViewModel,navController: NavController) {
+fun NavGraphBuilder.mainAppNestedGraph(authViewModel: AuthViewModel, feedViewModel: FeedViewModel, profileViewModel: ProfileViewModel,navController: NavController) {
     navigation(startDestination = Routes.FEED, route = Routes.MAIN_GRAPH) {
         composable(Routes.FEED) {
              FeedScreen(onAddPost = { navController.navigate(Routes.UPLOAD_POST) },viewModel = feedViewModel)
@@ -34,7 +35,7 @@ fun NavGraphBuilder.mainAppNestedGraph(authViewModel: AuthViewModel, feedViewMod
             DestinationsScreen()
         }
         composable(Routes.PROFILE) {
-             ProfileScreen(authViewModel)
+             ProfileScreen(authViewModel,profileViewModel)
         }
     }
 }

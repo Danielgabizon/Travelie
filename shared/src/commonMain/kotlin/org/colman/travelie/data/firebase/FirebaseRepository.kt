@@ -16,7 +16,7 @@ interface FirebaseRepository {
     suspend fun getUser(uid: String): Result<User, UserDBError>
 
     // Post management methods
-    suspend fun getPosts(): Result<Posts, PostDBError>
+    suspend fun getPosts(uid: String?): Result<Posts, PostDBError>
     suspend fun createPost(post: Post): Result<Post, PostDBError>
 
 

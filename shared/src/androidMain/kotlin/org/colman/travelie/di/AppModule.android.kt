@@ -5,6 +5,7 @@ import org.colman.travelie.features.destinations.DestinationsViewModel
 import org.colman.travelie.features.auth.AuthViewModel
 import org.colman.travelie.features.feed.FeedViewModel
 import org.colman.travelie.features.uploadPost.UploadPostViewModel
+import org.colman.travelie.features.profile.ProfileViewModel
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
 import org.colman.travelie.utils.GeoDecoder
@@ -23,6 +24,7 @@ actual val platformModule: Module = module {
     viewModelOf(::AuthViewModel)
     viewModelOf(::FeedViewModel)
     viewModelOf(::UploadPostViewModel)
+    viewModelOf(::ProfileViewModel)
 
 
     single { LocationProvider(androidContext()) }

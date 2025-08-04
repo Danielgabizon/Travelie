@@ -14,6 +14,7 @@ import org.colman.travelie.domain.Post.CreatePost
 import org.colman.travelie.features.destinations.DestinationsUseCases
 import org.colman.travelie.features.auth.AuthUseCases
 import org.colman.travelie.features.feed.FeedUseCases
+import org.colman.travelie.features.profile.ProfileUseCases
 import org.colman.travelie.features.uploadPost.UploadPostUseCases
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -63,13 +64,13 @@ val domainModule = module {
     factoryOf(::GetUser)
 
     factoryOf(::GetPosts)
-
     factoryOf(::CreatePost)
 
     factoryOf(::DestinationsUseCases)
     factoryOf(::AuthUseCases)
     factoryOf(::FeedUseCases)
     factoryOf(::UploadPostUseCases)
+    factoryOf(::ProfileUseCases)
 
 }
 

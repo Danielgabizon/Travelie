@@ -6,6 +6,7 @@ import org.colman.travelie.data.Result
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.firestore.where
 import org.colman.travelie.models.AuthUser
 import org.colman.travelie.models.Post
 import org.colman.travelie.models.Posts
@@ -112,13 +113,19 @@ class RemoteFirebaseRepository : FirebaseRepository {
 
     /* Post methods */
 
-    override suspend fun getPosts(): Result<Posts, PostDBError> {
+    override suspend fun getPosts(uid: String?): Result<Posts, PostDBError> {
         return try {
-            val snapshot =
+            val snapshot = if (uid != null) {
+                postsCollection
+                    .where { "uid" equalTo uid }
+                    .get()
+            } else {
                 postsCollection
                     .get()
+            }
             val posts = snapshot.documents.map { it.data<Post>() }
             Result.Success(Posts(items = posts))
+
         } catch (e: Exception) {
             Result.Failure(PostDBError("Get posts error: ${e.message ?: "Unknown error"}"))
         }
