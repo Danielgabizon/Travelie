@@ -15,6 +15,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
 import org.colman.travelie.features.auth.*
+import org.colman.travelie.features.feed.FeedViewModel
 import org.colman.travelie.ui.navigation.authNestedGraph
 import org.colman.travelie.ui.navigation.mainAppNestedGraph
 import org.colman.travelie.ui.shared_components.BottomNavigationBar
@@ -32,6 +33,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 val authViewModel: AuthViewModel = koinViewModel()
+                val feedViewModel: FeedViewModel = koinViewModel()
+
                 val uiState by authViewModel.uiState.collectAsState()
                 val user = (uiState as? AuthState.Loaded)?.user
 
@@ -73,7 +76,7 @@ class MainActivity : ComponentActivity() {
                         if (showBars) {
                             AppBar(
                                 title = currentTitle,
-                                showBackButton = false,
+                                showBackButton = currentRoute != Routes.FEED,
                                 onBackClick = { navController.popBackStack() }
                             )
                         }
@@ -109,6 +112,7 @@ class MainActivity : ComponentActivity() {
                             navController = navController
                         )
                         mainAppNestedGraph(authViewModel= authViewModel,
+                            feedViewModel = feedViewModel,
                             navController = navController
                         )
                     }

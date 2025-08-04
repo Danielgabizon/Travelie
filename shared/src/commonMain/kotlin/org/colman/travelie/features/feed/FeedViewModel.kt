@@ -29,6 +29,9 @@ class FeedViewModel(
             }
         }
     }
+    fun refreshPosts() {
+        getPosts()
+    }
 }
 
 

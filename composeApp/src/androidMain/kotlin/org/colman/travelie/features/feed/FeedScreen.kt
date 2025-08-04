@@ -31,10 +31,10 @@ import org.colman.travelie.ui.theme.*
 @Composable
 fun FeedScreen(
     onAddPost: () -> Unit,
-    viewModel: FeedViewModel = koinViewModel()
+    viewModel: FeedViewModel,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
-
+    println("FeedScreen viewmodel: $viewModel, uiState: $uiState")
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -42,6 +42,8 @@ fun FeedScreen(
             FloatingActionButton(
                 onClick = onAddPost,
                 shape = RoundedCornerShape(50),
+                containerColor = Terracotta,
+                contentColor = Color.White,
             ) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "New post")
             }
@@ -143,9 +145,9 @@ fun PostItem(post: Post) {
                     contentDescription = post.description,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(140.dp)
+                        .aspectRatio(4f / 3f)
                         .clip(RoundedCornerShape(10.dp)),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Fit
                 )
             }
         }

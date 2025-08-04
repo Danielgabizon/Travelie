@@ -176,8 +176,8 @@ fun RegisterScreen(
                         viewModel.register(
                             email = email,
                             password = password,
-                            firstName = firstName,
-                            lastName = lastName,
+                            firstName = firstName.lowercase().replaceFirstChar { it.uppercaseChar() },
+                            lastName = lastName.lowercase().replaceFirstChar { it.uppercaseChar() },
                             bio = bio
                         )
                     },
