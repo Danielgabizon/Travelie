@@ -30,7 +30,10 @@ class FeedViewModel(
         }
     }
     fun refreshPosts() {
-        getPosts()
+        scope.launch {
+            _uiState.emit(FeedState.Loading)
+            getPosts()
+        }
     }
 }
 

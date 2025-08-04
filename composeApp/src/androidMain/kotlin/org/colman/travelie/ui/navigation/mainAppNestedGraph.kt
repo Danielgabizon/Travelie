@@ -1,9 +1,11 @@
 package org.colman.travelie.ui.navigation
 
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import org.colman.travelie.features.auth.AuthState
 import org.colman.travelie.features.auth.AuthViewModel
 import org.colman.travelie.features.destinations.DestinationsScreen
 import org.colman.travelie.features.feed.FeedScreen
@@ -22,7 +24,12 @@ fun NavGraphBuilder.mainAppNestedGraph(authViewModel: AuthViewModel, feedViewMod
             UploadPostScreen(
                 authViewModel = authViewModel,
                 onPostUploaded = {
+                    // refresh feed
                     feedViewModel.refreshPosts()
+                    // refresh profile
+                    (authViewModel.uiState.value as AuthState.Loaded).user?.let { it1 ->
+                        profileViewModel.refreshUserPosts(it1.uid)
+                    }
                     navController.popBackStack()
                 },
                 onCancel = {

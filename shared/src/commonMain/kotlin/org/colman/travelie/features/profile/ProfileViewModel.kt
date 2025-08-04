@@ -27,6 +27,12 @@ class ProfileViewModel(
             }
         }
     }
+    fun refreshUserPosts(uid: String) {
+        scope.launch {
+            _uiState.emit(ProfileState.Loading)
+            getUserPosts(uid)
+        }
+    }
 
 }
 
