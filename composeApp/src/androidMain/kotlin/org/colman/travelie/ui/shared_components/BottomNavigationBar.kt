@@ -10,35 +10,35 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import org.colman.travelie.MainAppTab
+import org.colman.travelie.ui.navigation.Routes
 
 @Composable
 fun BottomNavigationBar(
-    selectedTab: MainAppTab,
-    onTabSelected: (MainAppTab) -> Unit
+    currentRoute: String,
+    onTabSelected: (String) -> Unit
 ) {
     NavigationBar {
         NavigationBarItem(
-            selected = selectedTab is MainAppTab.Feed,
-            onClick = { onTabSelected(MainAppTab.Feed) },
+            selected = currentRoute == Routes.FEED,
+            onClick = { onTabSelected(Routes.FEED) },
             icon = { Icon(Icons.Default.Home, contentDescription = "Feed") },
             label = { Text("Feed") }
         )
         NavigationBarItem(
-            selected = selectedTab is MainAppTab.Destinations,
-            onClick = { onTabSelected(MainAppTab.Destinations) },
+            selected = currentRoute == Routes.DESTINATIONS,
+            onClick = { onTabSelected(Routes.DESTINATIONS) },
             icon = { Icon(Icons.Default.Place, contentDescription = "Destinations") },
             label = { Text("Destinations") }
         )
         NavigationBarItem(
-            selected = selectedTab is MainAppTab.Profile,
-            onClick = { onTabSelected(MainAppTab.Profile) },
+            selected = currentRoute == Routes.PROFILE,
+            onClick = { onTabSelected(Routes.PROFILE) },
             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
             label = { Text("Profile") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = {  onTabSelected(MainAppTab.Logout) },
+            onClick = { onTabSelected(Routes.LOGOUT) },
             icon = { Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout") },
             label = { Text("Logout") }
         )

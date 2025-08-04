@@ -10,8 +10,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
 import org.colman.travelie.features.auth.*
@@ -22,12 +22,6 @@ import org.colman.travelie.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 import org.colman.travelie.ui.navigation.Routes
 
-sealed class MainAppTab(val route: String, val title: String) {
-    data object Feed : MainAppTab(Routes.FEED, "Feed")
-    data object Profile : MainAppTab(Routes.PROFILE, "Profile")
-    data object Destinations : MainAppTab(Routes.DESTINATIONS, "Destinations")
-    data object Logout : MainAppTab(Routes.LOGOUT, "Logout")
-}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,46 +34,59 @@ class MainActivity : ComponentActivity() {
                 val authViewModel: AuthViewModel = koinViewModel()
                 val uiState by authViewModel.uiState.collectAsState()
                 val user = (uiState as? AuthState.Loaded)?.user
-                val isLoggedIn = user != null
 
                 val navController = rememberNavController()
-                var selectedTab by remember { mutableStateOf<MainAppTab?>(null) }
-                val defaultTab = MainAppTab.Feed
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
+
+
+                // top bar title based on current route
+                val currentTitle = when (currentRoute) {
+                    Routes.FEED -> "Feed"
+                    Routes.PROFILE -> "Profile"
+                    Routes.DESTINATIONS -> "Destinations"
+                    else -> ""
+                }
+
+                // show top & bottom bars based on current route
+                val showBars = currentRoute in listOf(
+                    Routes.FEED,
+                    Routes.PROFILE,
+                    Routes.DESTINATIONS
+                )
 
                 LaunchedEffect(user) {
-                    if (user != null && selectedTab == null) {
-                        selectedTab = defaultTab
+                    if (user != null) {
                         navController.navigate(Routes.MAIN_GRAPH) {
-                            popUpTo(Routes.AUTH_GRAPH) { inclusive = true }
+                            popUpTo(navController.graph.id) { inclusive = true }
                         }
-                    } else if (user == null) {
-                        selectedTab = null
+                    } else{
                         navController.navigate(Routes.AUTH_GRAPH) {
-                            popUpTo(Routes.MAIN_GRAPH) { inclusive = true }
+                            popUpTo(navController.graph.id) { inclusive = true }
                         }
+
                     }
                 }
 
                 Scaffold(
                     topBar = {
-                        if (isLoggedIn && selectedTab != null) {
+                        if (showBars) {
                             AppBar(
-                                title = selectedTab!!.title,
+                                title = currentTitle,
                                 showBackButton = false,
                                 onBackClick = { navController.popBackStack() }
                             )
                         }
                     },
                     bottomBar = {
-                        if (isLoggedIn && selectedTab != null) {
+                        if (showBars) {
                             BottomNavigationBar(
-                                selectedTab = selectedTab!!,
-                                onTabSelected = { tab ->
-                                    if (tab == MainAppTab.Logout) {
+                                currentRoute = currentRoute ?: "",
+                                onTabSelected = { route ->
+                                    if (route == Routes.LOGOUT) {
                                         authViewModel.logout()
                                     } else {
-                                        selectedTab = tab
-                                        navController.navigate(tab.route) {
+                                        navController.navigate(route) {
                                             popUpTo(Routes.FEED) {
                                                 saveState = true
                                             }

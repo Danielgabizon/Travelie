@@ -11,7 +11,7 @@ import org.colman.travelie.features.profile.ProfileScreen
 import org.colman.travelie.features.uploadPost.UploadPostScreen
 
 fun NavGraphBuilder.mainAppNestedGraph(authViewModel: AuthViewModel,navController: NavController) {
-    navigation(startDestination = Routes.DESTINATIONS, route = Routes.MAIN_GRAPH) {
+    navigation(startDestination = Routes.FEED, route = Routes.MAIN_GRAPH) {
         composable(Routes.FEED) {
              FeedScreen(onAddPost = { navController.navigate(Routes.UPLOAD_POST) })
         }
