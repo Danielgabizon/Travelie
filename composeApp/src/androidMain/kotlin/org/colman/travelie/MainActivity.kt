@@ -14,8 +14,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
-import org.colman.travelie.features.auth.*
+import org.colman.travelie.auth.SessionManager
+import org.colman.travelie.domain.Auth.Logout
 import org.colman.travelie.features.feed.FeedViewModel
+import org.colman.travelie.features.logout.LogoutViewModel
 import org.colman.travelie.features.profile.ProfileViewModel
 import org.colman.travelie.ui.navigation.authNestedGraph
 import org.colman.travelie.ui.navigation.mainAppNestedGraph
@@ -23,6 +25,8 @@ import org.colman.travelie.ui.shared_components.BottomNavigationBar
 import org.colman.travelie.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 import org.colman.travelie.ui.navigation.Routes
+import org.koin.androidx.compose.get
+import org.koin.compose.koinInject
 
 
 class MainActivity : ComponentActivity() {
@@ -33,27 +37,23 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppTheme {
-                val authViewModel: AuthViewModel = koinViewModel()
-                val feedViewModel: FeedViewModel = koinViewModel()
-                val profileViewModel: ProfileViewModel = koinViewModel()
+                val sessionManager: SessionManager = koinInject()
+                val user = sessionManager.currentUser.collectAsState().value
+                val logoutViewModel: LogoutViewModel = koinViewModel()
 
-                val uiState by authViewModel.uiState.collectAsState()
-                val user = (uiState as? AuthState.Loaded)?.user
 
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
 
 
-                /* top bar title based on current route */
-                val currentTitle = when (currentRoute) {
+                val currentTopBarTitle = when (currentRoute) {
                     Routes.FEED -> "Feed"
                     Routes.PROFILE -> "Profile"
                     Routes.DESTINATIONS -> "Destinations"
                     else -> ""
                 }
 
-                /* show top & bottom bars based on current route */
                 val showBars = currentRoute in listOf(
                     Routes.FEED,
                     Routes.PROFILE,
@@ -61,15 +61,9 @@ class MainActivity : ComponentActivity() {
                 )
 
                 LaunchedEffect(user) {
-                    if (user != null) {
-                        navController.navigate(Routes.MAIN_GRAPH) {
-                            popUpTo(navController.graph.id) { inclusive = true }
-                        }
-                    } else{
-                        navController.navigate(Routes.AUTH_GRAPH) {
-                            popUpTo(navController.graph.id) { inclusive = true }
-                        }
-
+                    val targetRoute = if (user == null) Routes.AUTH_GRAPH else Routes.MAIN_GRAPH
+                    navController.navigate(targetRoute) {
+                        popUpTo(0) { inclusive = true }
                     }
                 }
 
@@ -77,7 +71,7 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         if (showBars) {
                             AppBar(
-                                title = currentTitle,
+                                title = currentTopBarTitle,
                                 showBackButton = currentRoute != Routes.FEED,
                                 onBackClick = { navController.popBackStack() }
                             )
@@ -89,7 +83,7 @@ class MainActivity : ComponentActivity() {
                                 currentRoute = currentRoute ?: "",
                                 onTabSelected = { route ->
                                     if (route == Routes.LOGOUT) {
-                                        authViewModel.logout()
+                                       logoutViewModel.logoutUser()
                                     } else {
                                         navController.navigate(route) {
                                             popUpTo(Routes.FEED) {
@@ -110,12 +104,9 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         authNestedGraph(
-                            authViewModel = authViewModel,
                             navController = navController
                         )
-                        mainAppNestedGraph(authViewModel= authViewModel,
-                            feedViewModel = feedViewModel,
-                            profileViewModel = profileViewModel,
+                        mainAppNestedGraph(
                             navController = navController
                         )
                     }

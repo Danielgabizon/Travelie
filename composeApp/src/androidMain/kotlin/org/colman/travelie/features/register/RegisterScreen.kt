@@ -1,4 +1,4 @@
-package org.colman.travelie.features.auth
+package org.colman.travelie.features.register
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,18 +19,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.colman.travelie.R
 import org.colman.travelie.ui.shared_components.Error
 import org.colman.travelie.ui.shared_components.Spinner
-import org.koin.androidx.compose.koinViewModel
 import org.colman.travelie.ui.theme.*
-
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
 fun RegisterScreen(
-    viewModel: AuthViewModel,
+    viewModel: RegisterViewModel = koinViewModel(),
     onNavigateToLogin: () -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
@@ -62,7 +60,7 @@ fun RegisterScreen(
         )
 
         Card(
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             elevation = CardDefaults.cardElevation(4.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             modifier = Modifier.fillMaxWidth(),
@@ -75,8 +73,8 @@ fun RegisterScreen(
 
             ) {
                 Text("Register",
-                    fontSize = 24.sp,
-                    color = Navy)
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.primary)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -219,8 +217,8 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         when (uiState) {
-            is AuthState.Error -> Error(uiState.errorMessage, modifier = Modifier.fillMaxWidth())
-            is AuthState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
+            is RegisterState.Error -> Error(uiState.errorMessage, modifier = Modifier.fillMaxWidth())
+            is RegisterState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
             else -> {}
         }
     }

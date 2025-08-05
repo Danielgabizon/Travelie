@@ -2,8 +2,6 @@ package org.colman.travelie.features.feed
 
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
-
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,22 +17,43 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil.compose.AsyncImage
 import org.colman.travelie.R
 import org.colman.travelie.models.Post
 import org.colman.travelie.models.Posts
-import org.koin.androidx.compose.koinViewModel
 import org.colman.travelie.ui.shared_components.Error
 import org.colman.travelie.ui.shared_components.Spinner
 import org.colman.travelie.ui.theme.*
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FeedScreen(
     onAddPost: () -> Unit,
-    viewModel: FeedViewModel,
+    viewModel: FeedViewModel = koinViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsState().value
-    println("FeedScreen viewmodel: $viewModel, uiState: $uiState")
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val currentViewModel = rememberUpdatedState(viewModel)
+
+    // Observe lifecycle events to refresh posts when the screen is resumed
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                currentViewModel.value.refreshPosts()
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -53,8 +72,7 @@ fun FeedScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
-                    .padding(padding)
+                    .padding(8.dp)
             ) {
                 when (uiState) {
                     is FeedState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
@@ -90,18 +108,11 @@ fun PostsContent(
 }
 @Composable
 fun PostItem(post: Post) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier.fillMaxWidth()
-    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (post.creatorImageUrl.isNotBlank()) {
                     AsyncImage(
                         model = post.creatorImageUrl,
@@ -124,18 +135,10 @@ fun PostItem(post: Post) {
 
                 Text(
                     text = post.creatorName,
-                    color = Terracotta,
+                    color = Color.Black,
                     style = MaterialTheme.typography.titleMedium
                 )
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = post.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Navy
-            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -145,11 +148,20 @@ fun PostItem(post: Post) {
                     contentDescription = post.description,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(4f / 3f)
+                        .height(500.dp) // or any height you want
                         .clip(RoundedCornerShape(10.dp)),
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Inside
+                )
+            }
+
+            if (post.description.isNotBlank()) {
+                Text(
+                    text = post.description,
+                    color = Color.Black,
+                    style = AppTypography.bodyLarge,
+                    modifier = Modifier.padding(top = 8.dp)
                 )
             }
         }
     }
-}
+

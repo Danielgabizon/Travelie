@@ -8,11 +8,14 @@ import org.colman.travelie.domain.Auth.Login
 import org.colman.travelie.domain.Auth.Register
 import org.colman.travelie.domain.Auth.Logout
 import org.colman.travelie.domain.User.SaveUser
-import org.colman.travelie.domain.User.GetUser
+import org.colman.travelie.domain.User.GetUserById
 import org.colman.travelie.domain.Post.GetPosts
 import org.colman.travelie.domain.Post.CreatePost
 import org.colman.travelie.features.destinations.DestinationsUseCases
-import org.colman.travelie.features.auth.AuthUseCases
+import org.colman.travelie.features.login.LoginUseCases
+import org.colman.travelie.features.register.RegisterUseCases
+import org.colman.travelie.features.logout.LogoutUseCases
+
 import org.colman.travelie.features.feed.FeedUseCases
 import org.colman.travelie.features.profile.ProfileUseCases
 import org.colman.travelie.features.uploadPost.UploadPostUseCases
@@ -25,6 +28,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.colman.travelie.auth.SessionManager
 import org.colman.travelie.data.firebase.FirebaseRepository
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -48,7 +52,7 @@ fun initKoin() {
 }
 
 
-fun appModules() = listOf(commonModule, platformModule, domainModule)
+fun appModules() = listOf(platformModule, domainModule, commonModule)
 
 expect val platformModule: Module
 
@@ -61,16 +65,19 @@ val domainModule = module {
     factoryOf(::Logout)
 
     factoryOf(::SaveUser)
-    factoryOf(::GetUser)
+    factoryOf(::GetUserById)
 
     factoryOf(::GetPosts)
     factoryOf(::CreatePost)
 
     factoryOf(::DestinationsUseCases)
-    factoryOf(::AuthUseCases)
+    factoryOf(::LoginUseCases)
+    factoryOf(::RegisterUseCases)
+
     factoryOf(::FeedUseCases)
     factoryOf(::UploadPostUseCases)
     factoryOf(::ProfileUseCases)
+    factoryOf(::LogoutUseCases)
 
 }
 
@@ -78,6 +85,8 @@ val commonModule = module {
     singleOf(::createJson)
     singleOf(::RemoteFirebaseRepository).bind<FirebaseRepository>()
     singleOf(::RemoteDestinationsRepository).bind<DestinationsRepository>()
+
+    singleOf (::SessionManager)
 
     single { createHttpClient(get(), get()) }
 

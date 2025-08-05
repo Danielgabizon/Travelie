@@ -23,11 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.colman.travelie.R
-import org.colman.travelie.features.auth.AuthState
-import org.colman.travelie.features.auth.AuthViewModel
-import org.colman.travelie.features.user.UserState
-import org.colman.travelie.models.Destination
-import org.colman.travelie.models.Destinations
 import org.colman.travelie.models.Post
 import org.colman.travelie.models.Posts
 import org.colman.travelie.models.User
@@ -40,19 +35,9 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileScreen(
-    authViewModel: AuthViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel = koinViewModel()
 ) {
-    val authState = authViewModel.uiState.collectAsState().value
-    val user = (authState as? AuthState.Loaded)?.user
-
     val uiState = profileViewModel.uiState.collectAsState().value
-
-    LaunchedEffect(user?.uid) {
-        if (user != null) {
-            profileViewModel.getUserPosts(user.uid)
-        }
-    }
 
 
     Column(
@@ -63,7 +48,7 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.Top
     ) {
 
-        ProfileContent(user = user)
+
         Spacer(modifier = Modifier.height(16.dp))
 
         when (uiState) {
@@ -73,7 +58,10 @@ fun ProfileScreen(
             is ProfileState.Error -> Error(message = uiState.errorMessage,
                 modifier = Modifier.fillMaxSize()
             )
-            is ProfileState.Loaded -> PostsContent(posts = uiState.userPosts!!)
+            is ProfileState.Loaded ->{
+                ProfileContent(user = uiState.user)
+                PostsContent(posts = uiState.userPosts)
+            }
 
         }
 

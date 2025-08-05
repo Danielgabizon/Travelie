@@ -3,19 +3,15 @@ package org.colman.travelie.ui.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import org.colman.travelie.features.auth.AuthViewModel
-import org.colman.travelie.features.auth.LoginScreen
-import org.colman.travelie.features.auth.RegisterScreen
-import org.colman.travelie.features.destinations.DestinationsScreen
+import org.colman.travelie.features.login.LoginScreen
+import org.colman.travelie.features.register.RegisterScreen
 
-fun NavGraphBuilder.authNestedGraph(authViewModel: AuthViewModel,
-                                    navController: androidx.navigation.NavController) {
+fun NavGraphBuilder.authNestedGraph(navController: androidx.navigation.NavController) {
     navigation(startDestination = Routes.LOGIN, route = Routes.AUTH_GRAPH) {
         println("defining")
 
         composable(Routes.LOGIN) {
             LoginScreen(
-                viewModel = authViewModel,
                 onNavigateToRegister = {
                     navController.navigate(Routes.REGISTER)
                 }
@@ -23,7 +19,6 @@ fun NavGraphBuilder.authNestedGraph(authViewModel: AuthViewModel,
         }
         composable(Routes.REGISTER) {
             RegisterScreen(
-                viewModel = authViewModel,
                 onNavigateToLogin = {
                     navController.popBackStack() }
             )

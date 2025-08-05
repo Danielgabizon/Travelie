@@ -6,10 +6,12 @@ import org.colman.travelie.data.Result
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
-import dev.gitlive.firebase.firestore.where
+import kotlin.uuid.ExperimentalUuidApi
+
 import org.colman.travelie.models.AuthUser
 import org.colman.travelie.models.Post
 import org.colman.travelie.models.Posts
+import kotlin.uuid.Uuid
 
 data class AuthError(
     override val message: String
@@ -93,7 +95,7 @@ class RemoteFirebaseRepository : FirebaseRepository {
     }
 
 
-    override suspend fun getUser(uid: String): Result<User, UserDBError> {
+    override suspend fun getUserById(uid: String): Result<User, UserDBError> {
         return try {
             val document =
                 usersCollection
@@ -130,21 +132,24 @@ class RemoteFirebaseRepository : FirebaseRepository {
             Result.Failure(PostDBError("Get posts error: ${e.message ?: "Unknown error"}"))
         }
     }
+    @OptIn(ExperimentalUuidApi::class)
     override suspend fun createPost(post: Post): Result<Post, PostDBError> {
         return try {
             if (post.uid.isBlank()) {
                 return Result.Failure(PostDBError("Post missing creator uid"))
             }
 
-            val docRef = postsCollection.add(post)
-            val savedPost = post.copy(postId = docRef.id)
+            val postWithId = post.copy(postId = Uuid.random().toString())
 
-            Result.Success(savedPost)
+            postsCollection.document(postWithId.postId).set(postWithId)
+
+            Result.Success(postWithId)
 
         } catch (e: Exception) {
             Result.Failure(PostDBError("Create post error: ${e.message ?: "Unknown error"}"))
         }
     }
+
 
 
 

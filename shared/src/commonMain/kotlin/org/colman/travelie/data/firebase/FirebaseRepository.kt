@@ -13,7 +13,7 @@ interface FirebaseRepository {
 
     // User management methods
     suspend fun saveUser(user: User): Result<User, UserDBError>
-    suspend fun getUser(uid: String): Result<User, UserDBError>
+    suspend fun getUserById(uid: String): Result<User, UserDBError>
 
     // Post management methods
     suspend fun getPosts(uid: String?): Result<Posts, PostDBError>

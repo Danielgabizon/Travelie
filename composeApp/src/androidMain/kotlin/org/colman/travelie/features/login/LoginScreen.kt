@@ -1,4 +1,4 @@
-package org.colman.travelie.features.auth
+package org.colman.travelie.features.login
 import org.colman.travelie.ui.theme.*
 
 import androidx.compose.foundation.background
@@ -22,11 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.colman.travelie.ui.shared_components.Error
 import org.colman.travelie.ui.shared_components.Spinner
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
 fun LoginScreen(
-    viewModel: AuthViewModel,
+    viewModel: LoginViewModel = koinViewModel(),
     onNavigateToRegister: () -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
@@ -143,8 +144,8 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         when (uiState) {
-            is AuthState.Error -> Error(uiState.errorMessage, modifier = Modifier.fillMaxWidth())
-            is AuthState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
+            is LoginState.Error -> Error(uiState.errorMessage, modifier = Modifier.fillMaxWidth())
+            is LoginState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
             else -> {}
         }
     }

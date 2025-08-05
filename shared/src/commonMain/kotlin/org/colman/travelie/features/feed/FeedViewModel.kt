@@ -17,7 +17,7 @@ class FeedViewModel(
         getPosts()
     }
 
-    fun getPosts() {
+    private fun getPosts() {
         scope.launch {
             when (val result = feedUseCases.getPosts()) {
                 is Result.Success -> _uiState.emit(FeedState.Loaded(result.data!!))

@@ -5,8 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import org.colman.travelie.features.auth.AuthState
-import org.colman.travelie.features.auth.AuthViewModel
+
 import org.colman.travelie.features.destinations.DestinationsScreen
 import org.colman.travelie.features.feed.FeedScreen
 import org.colman.travelie.features.feed.FeedViewModel
@@ -15,21 +14,14 @@ import org.colman.travelie.features.profile.ProfileViewModel
 import org.colman.travelie.features.uploadPost.UploadPostScreen
 import org.koin.androidx.compose.koinViewModel
 
-fun NavGraphBuilder.mainAppNestedGraph(authViewModel: AuthViewModel, feedViewModel: FeedViewModel, profileViewModel: ProfileViewModel,navController: NavController) {
+fun NavGraphBuilder.mainAppNestedGraph(navController: NavController) {
     navigation(startDestination = Routes.FEED, route = Routes.MAIN_GRAPH) {
         composable(Routes.FEED) {
-             FeedScreen(onAddPost = { navController.navigate(Routes.UPLOAD_POST) },viewModel = feedViewModel)
+             FeedScreen(onAddPost = { navController.navigate(Routes.UPLOAD_POST) })
         }
         composable(Routes.UPLOAD_POST) {
             UploadPostScreen(
-                authViewModel = authViewModel,
                 onPostUploaded = {
-                    // refresh feed
-                    feedViewModel.refreshPosts()
-                    // refresh profile
-                    (authViewModel.uiState.value as AuthState.Loaded).user?.let { it1 ->
-                        profileViewModel.refreshUserPosts(it1.uid)
-                    }
                     navController.popBackStack()
                 },
                 onCancel = {
@@ -42,7 +34,7 @@ fun NavGraphBuilder.mainAppNestedGraph(authViewModel: AuthViewModel, feedViewMod
             DestinationsScreen()
         }
         composable(Routes.PROFILE) {
-             ProfileScreen(authViewModel,profileViewModel)
+             ProfileScreen()
         }
     }
 }
