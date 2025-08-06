@@ -41,11 +41,11 @@ fun ProfileScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(LightGray),
+            .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         when (uiState) {
             is ProfileState.Loading -> {
@@ -66,7 +66,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileContent(user: User?) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RectangleShape,
         modifier = Modifier
             .fillMaxWidth()
@@ -96,9 +96,8 @@ fun ProfileContent(user: User?) {
                 ) {
                     Text(
                         text = "${user?.firstName ?: "First Name"} ${user?.lastName ?: "Last Name"}",
-                        fontSize = 20.sp,
-                        color = Terracotta,
-                        style = MaterialTheme.typography.headlineSmall
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleMedium
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -106,7 +105,7 @@ fun ProfileContent(user: User?) {
                     Text(
                         text = user?.bio ?: "No bio provided",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Navy
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     )
                 }
             }
@@ -122,24 +121,36 @@ fun PostsContent(
     posts: Posts,
     lazyGridState: LazyGridState = rememberLazyGridState()
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        state = lazyGridState,
-        verticalArrangement = Arrangement.spacedBy(2.dp), // vertical spacing between rows
-        horizontalArrangement = Arrangement.spacedBy(2.dp), // horizontal spacing between columns
-        modifier = Modifier
-            .fillMaxSize()
+    if (posts.items.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No posts to show",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            )
+        }
+    } else {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            state = lazyGridState,
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            modifier = Modifier
+                .fillMaxSize()
 
-    ) {
-        items(posts.items) { post ->
-            PostItem(post)
+        ) {
+            items(posts.items) { post ->
+                PostItem(post)
+            }
         }
     }
 }
 
 @Composable
 fun PostItem(post: Post) {
-    val context = LocalContext.current
 
     Box(
         modifier = Modifier

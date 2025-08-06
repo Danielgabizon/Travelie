@@ -36,20 +36,19 @@ fun FeedScreen(
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddPost,
                 shape = RoundedCornerShape(50),
-                containerColor = Terracotta,
-                contentColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
             ) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "New post")
             }
         },
-        containerColor = LightGray,
+        containerColor = MaterialTheme.colorScheme.background,
         content = { padding ->
             Column(
                 modifier = Modifier
@@ -71,9 +70,9 @@ fun PostsContent(
 ) {
     if (posts.items.isEmpty()) {
         Text(
-            text = "No posts available",
+            text = "No posts to show",
             style = MaterialTheme.typography.bodyMedium,
-            color = Navy,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             textAlign = TextAlign.Center
         )
@@ -94,7 +93,7 @@ fun PostItem(post: Post) {
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (post.creatorImageUrl.isNotBlank()) {
                     AsyncImage(
                         model = post.creatorImageUrl,
@@ -117,8 +116,8 @@ fun PostItem(post: Post) {
 
                 Text(
                     text = post.creatorName,
-                    color = Color.Black,
-                    style = MaterialTheme.typography.titleMedium
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleSmall
                 )
             }
 
@@ -141,7 +140,7 @@ fun PostItem(post: Post) {
                     text = post.description,
                     color = Color.Black,
                     style = AppTypography.bodyLarge,
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(16.dp)
                 )
             }
         }
