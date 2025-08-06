@@ -78,7 +78,7 @@ private fun UploadPostForm(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             elevation = CardDefaults.cardElevation(4.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             modifier = Modifier.fillMaxWidth()
@@ -120,7 +120,7 @@ private fun UploadPostForm(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(120.dp),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Terracotta,
                         unfocusedBorderColor = Lavender,
@@ -141,7 +141,7 @@ private fun UploadPostForm(
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 8.dp),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Beige,
                             contentColor = Navy
@@ -156,7 +156,7 @@ private fun UploadPostForm(
                             .weight(1f)
                             .padding(start = 8.dp),
                         enabled = description.isNotBlank(),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Terracotta,
                             contentColor = Color.White,

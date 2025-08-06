@@ -138,8 +138,8 @@ fun PostItem(post: Post) {
             if (post.description.isNotBlank()) {
                 Text(
                     text = post.description,
-                    color = Color.Black,
-                    style = AppTypography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(16.dp)
                 )
             }
