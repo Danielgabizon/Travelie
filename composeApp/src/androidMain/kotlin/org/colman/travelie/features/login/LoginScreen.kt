@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import org.colman.travelie.ui.shared_components.Error
 import org.colman.travelie.ui.shared_components.Spinner
 import org.koin.compose.viewmodel.koinViewModel
-
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
@@ -67,7 +66,7 @@ private fun LoginForm(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(LightGray)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -81,9 +80,9 @@ private fun LoginForm(
         )
 
         Card(
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             elevation = CardDefaults.cardElevation(4.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
@@ -92,7 +91,12 @@ private fun LoginForm(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Login", fontSize = 24.sp, color = Navy)
+                Text(
+                    "Login",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
@@ -101,11 +105,11 @@ private fun LoginForm(
                     label = { Text("Email") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Terracotta,
-                        unfocusedBorderColor = Lavender,
-                        cursorColor = Terracotta
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
+                        cursorColor = MaterialTheme.colorScheme.secondary
                     )
                 )
 
@@ -118,11 +122,11 @@ private fun LoginForm(
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Terracotta,
-                        unfocusedBorderColor = Lavender,
-                        cursorColor = Terracotta
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
+                        cursorColor = MaterialTheme.colorScheme.secondary
                     )
                 )
 
@@ -132,15 +136,16 @@ private fun LoginForm(
                     onClick = onLoginClick,
                     modifier = Modifier.fillMaxWidth(),
                     enabled = email.isNotBlank() && password.isNotBlank(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Terracotta,
-                        contentColor = Color.White,
-                        disabledContainerColor = Beige,
-                        disabledContentColor = Navy.copy(alpha = 0.3f)
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        disabledContainerColor = MaterialTheme.colorScheme.tertiary,
+                        disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.3f)
                     )
+
                 ) {
-                    Text("Log In", color = Color.White)
+                    Text("Log In", color = MaterialTheme.colorScheme.onSecondary,style = MaterialTheme.typography.labelLarge)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -150,15 +155,16 @@ private fun LoginForm(
                         append("Don't have an account? ")
                         withStyle(
                             style = SpanStyle(
-                                color = Terracotta,
+                                color = MaterialTheme.colorScheme.secondary,
                                 fontWeight = FontWeight.Bold
                             )
                         ) {
                             append("Register")
                         }
                     },
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.clickable { onNavigateToRegister() },
-                    color = Navy
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

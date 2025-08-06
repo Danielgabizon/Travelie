@@ -124,17 +124,27 @@ class MainActivity : ComponentActivity() {
     ) {
         CenterAlignedTopAppBar(
             windowInsets = TopAppBarDefaults.windowInsets,
-            title = { Text(text = title) },
+            title = {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
             navigationIcon = {
                 if (showBackButton) {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
                         )
                     }
                 }
-            }
+            },
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                titleContentColor = MaterialTheme.colorScheme.onPrimary
+            )
         )
     }
-}
+    }

@@ -41,7 +41,6 @@ fun RegisterScreen(
     var bio by remember { mutableStateOf("") }
 
     when (uiState) {
-
         is RegisterState.Idle,
         is RegisterState.Error -> {
             RegisterForm(
@@ -69,11 +68,7 @@ fun RegisterScreen(
                 scrollState = scrollState
             )
         }
-
-        is RegisterState.Loading -> {
-            Spinner(modifier = Modifier.fillMaxSize())
-        }
-
+        is RegisterState.Loading -> Spinner(modifier = Modifier.fillMaxSize())
         else -> {}
     }
 }
@@ -99,7 +94,7 @@ private fun RegisterForm(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .background(LightGray)
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -115,14 +110,19 @@ private fun RegisterForm(
         Card(
             shape = MaterialTheme.shapes.large,
             elevation = CardDefaults.cardElevation(4.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Register", style = MaterialTheme.typography.titleLarge, color = Navy)
+                Text(
+                    "Register",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
@@ -131,7 +131,7 @@ private fun RegisterForm(
                     label = { Text("Email") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = registerTextFieldColors()
                 )
 
@@ -144,7 +144,7 @@ private fun RegisterForm(
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = registerTextFieldColors()
                 )
 
@@ -161,7 +161,7 @@ private fun RegisterForm(
                         label = { Text("First Name") },
                         singleLine = true,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         colors = registerTextFieldColors()
                     )
 
@@ -171,7 +171,7 @@ private fun RegisterForm(
                         label = { Text("Last Name") },
                         singleLine = true,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = MaterialTheme.shapes.medium,
                         colors = registerTextFieldColors()
                     )
                 }
@@ -183,7 +183,7 @@ private fun RegisterForm(
                     onValueChange = onBioChange,
                     label = { Text("Bio (optional)") },
                     modifier = Modifier.fillMaxWidth().height(100.dp),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = registerTextFieldColors()
                 )
 
@@ -194,15 +194,16 @@ private fun RegisterForm(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = email.isNotBlank() && password.isNotBlank() &&
                             firstName.isNotBlank() && lastName.isNotBlank(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Terracotta,
-                        contentColor = Color.White,
-                        disabledContainerColor = Beige,
-                        disabledContentColor = Navy.copy(alpha = 0.3f)
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        disabledContainerColor = MaterialTheme.colorScheme.tertiary,
+                        disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.3f)
                     )
                 ) {
-                    Text("Register", color = Color.White)
+                    Text("Register", color = MaterialTheme.colorScheme.onSecondary,style = MaterialTheme.typography.labelLarge)
+
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -211,13 +212,17 @@ private fun RegisterForm(
                     buildAnnotatedString {
                         append("Already have an account? ")
                         withStyle(
-                            style = SpanStyle(color = Terracotta, fontWeight = FontWeight.Bold)
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontWeight = FontWeight.Bold
+                            )
                         ) {
                             append("Login")
                         }
                     },
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.clickable { onNavigateToLogin() },
-                    color = Navy
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -232,9 +237,11 @@ private fun RegisterForm(
 
 @Composable
 fun registerTextFieldColors(): TextFieldColors = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = Terracotta,
-    unfocusedBorderColor = Lavender,
-    cursorColor = Terracotta
+    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+    unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
+    cursorColor = MaterialTheme.colorScheme.secondary
 )
+
+
 
 
