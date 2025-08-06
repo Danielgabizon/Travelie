@@ -31,14 +31,12 @@ import org.colman.travelie.ui.shared_components.Spinner
 import org.colman.travelie.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
-
-
 @Composable
 fun ProfileScreen(
     profileViewModel: ProfileViewModel = koinViewModel()
 ) {
-    val uiState = profileViewModel.uiState.collectAsState().value
-
+    val uiState by profileViewModel.uiState.collectAsState()
+    val user by profileViewModel.user.collectAsState()
 
     Column(
         modifier = Modifier
@@ -47,26 +45,24 @@ fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
-
-
         Spacer(modifier = Modifier.height(16.dp))
 
         when (uiState) {
-            is ProfileState.Loading -> Spinner(
-                modifier = Modifier.fillMaxSize()
-            )
-            is ProfileState.Error -> Error(message = uiState.errorMessage,
-                modifier = Modifier.fillMaxSize()
-            )
-            is ProfileState.Loaded ->{
-                ProfileContent(user = uiState.user)
-                PostsContent(posts = uiState.userPosts)
+            is ProfileState.Loading -> {
+                Spinner(modifier = Modifier.fillMaxSize())
             }
-
+            is ProfileState.Loaded -> {
+                ProfileContent(user = user)
+                PostsContent(posts = (uiState as ProfileState.Loaded).posts)
+            }
+            is ProfileState.Error -> {
+                val errorMessage = (uiState as ProfileState.Error).errorMessage
+                Error(message = errorMessage, modifier = Modifier.fillMaxSize())
+            }
         }
-
     }
 }
+
 @Composable
 fun ProfileContent(user: User?) {
     Card(

@@ -8,43 +8,48 @@ import org.colman.travelie.data.Result
 import org.colman.travelie.features.BaseViewModel
 import org.colman.travelie.features.feed.FeedState
 import org.colman.travelie.features.feed.FeedUseCases
+import org.colman.travelie.models.User
 
 
 class ProfileViewModel(
     private val profileUseCases: ProfileUseCases,
-    private val sessionManager: SessionManager
-
+    sessionManager: SessionManager
 ) : BaseViewModel<ProfileState>() {
     private val _uiState: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState.Loading)
     override val uiState: StateFlow<ProfileState> get() = _uiState
 
+    val user: StateFlow<User?> = sessionManager.currentUser
+
+
     init {
-        loadUserProfile()
+        loadUserPosts()
     }
 
-    private fun loadUserProfile() {
+    private fun loadUserPosts() {
         scope.launch {
-            val user = sessionManager.currentUser.value
-            if (user == null) {
+            if (user.value == null) {
                 _uiState.emit(ProfileState.Error("User not logged in"))
                 return@launch
             }
-            when (val postsResult = profileUseCases.getPosts(user.uid)) {
+            when (val postsResult = profileUseCases.getPosts(user.value?.uid)) {
                 is Result.Success -> {
-                    _uiState.emit(ProfileState.Loaded(user, postsResult.data!!))
+                    _uiState.emit(ProfileState.Loaded(postsResult.data!!))
                 }
+
                 is Result.Failure -> {
-                    _uiState.emit(ProfileState.Error(postsResult.error?.message ?: "Failed to load posts"))
+                    _uiState.emit(
+                        ProfileState.Error(
+                            postsResult.error?.message ?: "Failed to load posts"
+                        )
+                    )
                 }
             }
         }
     }
-
     fun refreshUserPosts() {
         scope.launch {
             _uiState.emit(ProfileState.Loading)
-            loadUserProfile()
-        }
+            loadUserPosts()}
     }
 
 }

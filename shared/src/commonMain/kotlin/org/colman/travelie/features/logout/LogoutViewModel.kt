@@ -10,7 +10,7 @@ class LogoutViewModel(
     private val sessionManager: SessionManager
 ) : BaseViewModel<LogoutState>() {
 
-    private val _uiState = MutableStateFlow<LogoutState>(LogoutState.Loaded)
+    private val _uiState = MutableStateFlow<LogoutState>(LogoutState.Idle)
     override val uiState: StateFlow<LogoutState> get() = _uiState
 
     fun logoutUser() {

@@ -36,24 +36,6 @@ fun FeedScreen(
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val currentViewModel = rememberUpdatedState(viewModel)
-
-    // Observe lifecycle events to refresh posts when the screen is resumed
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                currentViewModel.value.refreshPosts()
-            }
-        }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -75,7 +57,7 @@ fun FeedScreen(
                     .padding(8.dp)
             ) {
                 when (uiState) {
-                    is FeedState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
+                    is FeedState.Loading -> Spinner(modifier = Modifier.fillMaxSize())
                     is FeedState.Error -> Error(message = uiState.errorMessage)
                     is FeedState.Loaded -> PostsContent(uiState.posts)
                 }

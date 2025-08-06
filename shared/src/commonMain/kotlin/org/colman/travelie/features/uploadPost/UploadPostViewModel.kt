@@ -17,23 +17,10 @@ class UploadPostViewModel(
     private val sessionManager: SessionManager
 ) : BaseViewModel<UploadPostState>() {
 
-    private val _uiState: MutableStateFlow<UploadPostState> = MutableStateFlow(UploadPostState.LoadingUser)
+    private val _uiState: MutableStateFlow<UploadPostState> = MutableStateFlow(UploadPostState.Idle)
     override val uiState: StateFlow<UploadPostState> get() = _uiState
 
-    init {
-        loadUserDetails()
-    }
-
-    private fun loadUserDetails() {
-        scope.launch {
-            val user = sessionManager.currentUser.value
-            if (user == null) {
-                _uiState.emit(UploadPostState.Error("User not logged in"))
-                return@launch
-            }
-            _uiState.emit(UploadPostState.UserLoaded(user))
-        }
-    }
+    val user = sessionManager.currentUser
 
 
     fun uploadPost(
@@ -42,7 +29,7 @@ class UploadPostViewModel(
     ) {
         scope.launch {
 
-            _uiState.emit(UploadPostState.UploadingPost)
+            _uiState.emit(UploadPostState.Loading)
 
             val user = sessionManager.currentUser.value
             if (user == null) {
@@ -60,8 +47,7 @@ class UploadPostViewModel(
 
             when (val result = uploadPostUseCases.createPost(post)) {
                 is Result.Success -> _uiState.emit(
-                    UploadPostState.PostUploaded(
-                        user,
+                    UploadPostState.Loaded(
                         result.data!!
                     )
                 )

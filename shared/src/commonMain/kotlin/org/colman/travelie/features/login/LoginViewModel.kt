@@ -12,12 +12,11 @@ class LoginViewModel(
     private val loginUseCases: LoginUseCases,
     private val sessionManager: SessionManager,
 ) : BaseViewModel<LoginState>() {
-    private val _uiState: MutableStateFlow<LoginState> = MutableStateFlow(LoginState.Loaded(null))
+    private val _uiState: MutableStateFlow<LoginState> = MutableStateFlow(LoginState.Idle)
     override val uiState: StateFlow<LoginState> get() = _uiState
     fun login(email: String, password: String) {
         scope.launch {
             _uiState.emit(LoginState.Loading)
-
             // login with Firebase Auth
             when (val result = loginUseCases.login(email, password)) {
                 is Result.Success -> {
@@ -27,7 +26,7 @@ class LoginViewModel(
                     when (val userResult = loginUseCases.getUserById(authUser.uid)) {
                         is Result.Success -> {
                             sessionManager.setUser(userResult.data) // store user in session manager
-                            _uiState.emit(LoginState.Loaded(userResult.data))
+                            _uiState.emit(LoginState.Loaded(userResult.data!!))
                         }
 
                         is Result.Failure -> {

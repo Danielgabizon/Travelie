@@ -12,7 +12,7 @@ class RegisterViewModel(
     private val sessionManager: SessionManager
 ) : BaseViewModel<RegisterState>() {
 
-    private val _uiState = MutableStateFlow<RegisterState>(RegisterState.Loaded(null))
+    private val _uiState = MutableStateFlow<RegisterState>(RegisterState.Idle)
     override val uiState: StateFlow<RegisterState> = _uiState
 
     fun register(
@@ -44,7 +44,7 @@ class RegisterViewModel(
                     when (val saveResult = registerUseCases.saveUser(newUser)) {
                         is Result.Success -> {
                             sessionManager.setUser(saveResult.data) // store user in session manager
-                            _uiState.emit(RegisterState.Loaded(saveResult.data))
+                            _uiState.emit(RegisterState.Loaded(saveResult.data!!))
                         }
 
                         is Result.Failure -> {

@@ -24,17 +24,46 @@ import org.colman.travelie.ui.shared_components.Error
 import org.colman.travelie.ui.shared_components.Spinner
 import org.koin.compose.viewmodel.koinViewModel
 
-
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
-    onNavigateToRegister: () -> Unit,
+    onNavigateToRegister: () -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
+    val uiState by viewModel.uiState.collectAsState()
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    when (uiState) {
+        is LoginState.Idle,
+        is LoginState.Error -> {
+            LoginForm(
+                email = email,
+                password = password,
+                onEmailChange = { email = it.trim() },
+                onPasswordChange = { password = it },
+                onLoginClick = { viewModel.login(email, password) },
+                onNavigateToRegister = onNavigateToRegister,
+                errorMessage = (uiState as? LoginState.Error)?.errorMessage
+            )
+        }
+        is LoginState.Loading -> {
+            Spinner(modifier = Modifier.fillMaxSize())
+        }
+        else -> {}
+    }
+}
 
+@Composable
+private fun LoginForm(
+    email: String,
+    password: String,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit,
+    onNavigateToRegister: () -> Unit,
+    errorMessage: String? = null
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,9 +77,9 @@ fun LoginScreen(
         Image(
             painter = painterResource(id = R.drawable.satic_logo),
             contentDescription = "App Logo",
-            modifier = Modifier
-                .size(200.dp)
+            modifier = Modifier.size(200.dp)
         )
+
         Card(
             shape = RoundedCornerShape(16.dp),
             elevation = CardDefaults.cardElevation(4.dp),
@@ -63,16 +92,12 @@ fun LoginScreen(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Login",
-                    fontSize = 24.sp,
-                    color = Navy,
-                 )
-
+                Text("Login", fontSize = 24.sp, color = Navy)
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it.trim() },
+                    onValueChange = onEmailChange,
                     label = { Text("Email") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
@@ -88,7 +113,7 @@ fun LoginScreen(
 
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = onPasswordChange,
                     label = { Text("Password") },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
@@ -104,7 +129,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
-                    onClick = { viewModel.login(email.trim(), password.trim()) },
+                    onClick = onLoginClick,
                     modifier = Modifier.fillMaxWidth(),
                     enabled = email.isNotBlank() && password.isNotBlank(),
                     shape = RoundedCornerShape(12.dp),
@@ -112,8 +137,9 @@ fun LoginScreen(
                         containerColor = Terracotta,
                         contentColor = Color.White,
                         disabledContainerColor = Beige,
-                        disabledContentColor = Navy.copy(alpha = 0.3f)))
-                {
+                        disabledContentColor = Navy.copy(alpha = 0.3f)
+                    )
+                ) {
                     Text("Log In", color = Color.White)
                 }
 
@@ -122,7 +148,6 @@ fun LoginScreen(
                 Text(
                     buildAnnotatedString {
                         append("Don't have an account? ")
-
                         withStyle(
                             style = SpanStyle(
                                 color = Terracotta,
@@ -135,19 +160,13 @@ fun LoginScreen(
                     modifier = Modifier.clickable { onNavigateToRegister() },
                     color = Navy
                 )
-
-
             }
-
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        when (uiState) {
-            is LoginState.Error -> Error(uiState.errorMessage, modifier = Modifier.fillMaxWidth())
-            is LoginState.Loading -> Spinner(modifier = Modifier.fillMaxWidth())
-            else -> {}
+        errorMessage?.let {
+            Error(it, modifier = Modifier.fillMaxWidth())
         }
     }
-
 }
