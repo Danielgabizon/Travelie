@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.colman.travelie.data.Result
 import org.colman.travelie.features.BaseViewModel
+import org.colman.travelie.features.profile.ProfileState
+import org.colman.travelie.utils.RefreshEvents
 
 
 class FeedViewModel(
@@ -15,6 +17,7 @@ class FeedViewModel(
 
     init {
         getPosts()
+        observeRefreshTrigger()
     }
 
     private fun getPosts() {
@@ -29,10 +32,12 @@ class FeedViewModel(
             }
         }
     }
-    fun refreshPosts() {
+    private fun observeRefreshTrigger() {
         scope.launch {
-            _uiState.emit(FeedState.Loading)
-            getPosts()
+            RefreshEvents.refreshFeed.collect {
+                _uiState.emit(FeedState.Loading)
+                getPosts()
+            }
         }
     }
 }

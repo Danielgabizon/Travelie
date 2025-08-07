@@ -1,4 +1,4 @@
-package org.colman.travelie.auth
+package org.colman.travelie.utils
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

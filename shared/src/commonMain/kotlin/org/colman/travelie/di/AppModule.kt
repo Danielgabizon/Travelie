@@ -28,7 +28,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import org.colman.travelie.auth.SessionManager
+import org.colman.travelie.utils.SessionManager
 import org.colman.travelie.data.firebase.FirebaseRepository
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module

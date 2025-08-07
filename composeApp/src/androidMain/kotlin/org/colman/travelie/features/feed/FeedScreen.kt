@@ -23,7 +23,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import org.colman.travelie.R
 import org.colman.travelie.models.Post
@@ -31,14 +34,20 @@ import org.colman.travelie.models.Posts
 import org.colman.travelie.ui.shared_components.Error
 import org.colman.travelie.ui.shared_components.Spinner
 import org.colman.travelie.ui.theme.*
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FeedScreen(
     onAddPost: () -> Unit,
-    viewModel: FeedViewModel = koinViewModel()
-) {
+    viewModel: FeedViewModel = koinViewModel(),
+    navController: NavController,
+    ) {
+
     val uiState = viewModel.uiState.collectAsState().value
+    val currentBackStackEntry = navController.currentBackStackEntry
+
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

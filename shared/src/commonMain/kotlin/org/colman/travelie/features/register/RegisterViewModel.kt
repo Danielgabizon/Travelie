@@ -3,7 +3,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-import org.colman.travelie.auth.SessionManager
+import org.colman.travelie.utils.SessionManager
 import org.colman.travelie.features.BaseViewModel
 import org.colman.travelie.data.Result
 import org.colman.travelie.models.User
