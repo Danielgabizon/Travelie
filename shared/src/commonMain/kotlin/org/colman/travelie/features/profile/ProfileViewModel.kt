@@ -3,11 +3,12 @@ package org.colman.travelie.features.profile
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.colman.travelie.utils.SessionManager
+import org.colman.travelie.auth.SessionManager
 import org.colman.travelie.data.Result
 import org.colman.travelie.features.BaseViewModel
 import org.colman.travelie.models.User
-import org.colman.travelie.utils.RefreshEvents
+import org.colman.travelie.utils.eventBus.Event
+import org.colman.travelie.utils.eventBus.EventBus
 
 
 class ProfileViewModel(
@@ -22,7 +23,7 @@ class ProfileViewModel(
 
     init {
         loadUserPosts()
-        observeRefreshTrigger()
+        observeEvents()
     }
 
     private fun loadUserPosts() {
@@ -46,11 +47,15 @@ class ProfileViewModel(
             }
         }
     }
-    private fun observeRefreshTrigger() {
+    private fun observeEvents() {
         scope.launch {
-            RefreshEvents.refreshProfile.collect {
-                _uiState.emit(ProfileState.Loading)
-                loadUserPosts()
+            EventBus.collectEvents { event ->
+                when (event) {
+                    Event.PostUploaded -> {
+                        _uiState.emit(ProfileState.Loading)
+                        loadUserPosts()
+                    }
+                }
             }
         }
     }

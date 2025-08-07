@@ -1,15 +1,16 @@
 package org.colman.travelie.features.uploadPost
 
 import org.colman.travelie.models.Post
+import org.colman.travelie.utils.eventBus.Event
 
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.colman.travelie.utils.SessionManager
+import org.colman.travelie.auth.SessionManager
 import org.colman.travelie.data.Result
 import org.colman.travelie.features.BaseViewModel
-
+import org.colman.travelie.utils.eventBus.EventBus
 
 
 class UploadPostViewModel(
@@ -46,11 +47,13 @@ class UploadPostViewModel(
             )
 
             when (val result = uploadPostUseCases.createPost(post)) {
-                is Result.Success -> _uiState.emit(
-                    UploadPostState.Loaded(
-                        result.data!!
-                    )
-                )
+                is Result.Success -> {
+                    _uiState.emit(UploadPostState.Loaded(result.data!!))
+                    // notify that the post has been uploaded
+                    EventBus.emit(Event.PostUploaded)
+
+                }
+
                 is Result.Failure -> _uiState.emit(
                     UploadPostState.Error(result.error?.message ?: "Unknown error")
                 )

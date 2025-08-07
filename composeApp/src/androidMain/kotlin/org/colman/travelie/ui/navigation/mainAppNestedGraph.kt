@@ -12,7 +12,6 @@ import org.colman.travelie.features.feed.FeedViewModel
 import org.colman.travelie.features.profile.ProfileScreen
 import org.colman.travelie.features.profile.ProfileViewModel
 import org.colman.travelie.features.uploadPost.UploadPostScreen
-import org.colman.travelie.utils.RefreshEvents
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -27,8 +26,6 @@ fun NavGraphBuilder.mainAppNestedGraph(navController: NavController) {
             UploadPostScreen(
                 onPostUploaded = {
                     navController.popBackStack()
-                    RefreshEvents.triggerFeedRefresh()
-                    RefreshEvents.triggerProfileRefresh()
                 },
                 onCancel = {
                     navController.popBackStack()
