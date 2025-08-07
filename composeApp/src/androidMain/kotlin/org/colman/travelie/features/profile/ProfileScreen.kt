@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -76,16 +77,29 @@ fun ProfileContent(user: User?) {
                 Modifier
                     .fillMaxWidth()
                     .padding(24.dp),
+
             ) {
 
-                Image(
-                    painter = painterResource(id = R.drawable.default_avatar),
-                    contentDescription = "Profile Picture",
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                        .weight(0.3f, fill = false)
-                )
+                if (user?.profilePicture != "" ) {
+                    AsyncImage(
+                        model = user?.profilePicture,
+                        contentDescription = "Profile Image",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(50)),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.default_avatar),
+                        contentDescription = "Profile Image",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(50))
+                            .weight(0.3f, fill = false)
+                    )
+                }
+
 
                 Spacer(modifier = Modifier.width(16.dp))
 

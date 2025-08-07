@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -15,17 +13,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.FirebaseApp
 import org.colman.travelie.auth.SessionManager
-import org.colman.travelie.domain.Auth.Logout
-import org.colman.travelie.features.feed.FeedViewModel
 import org.colman.travelie.features.logout.LogoutViewModel
-import org.colman.travelie.features.profile.ProfileViewModel
 import org.colman.travelie.ui.navigation.authNestedGraph
 import org.colman.travelie.ui.navigation.mainAppNestedGraph
 import org.colman.travelie.ui.shared_components.BottomNavigationBar
+import org.colman.travelie.ui.shared_components.AppBar
 import org.colman.travelie.ui.theme.AppTheme
 import org.koin.androidx.compose.koinViewModel
 import org.colman.travelie.ui.navigation.Routes
-import org.koin.androidx.compose.get
 import org.koin.compose.koinInject
 
 
@@ -83,7 +78,7 @@ class MainActivity : ComponentActivity() {
                                 currentRoute = currentRoute ?: "",
                                 onTabSelected = { route ->
                                     if (route == Routes.LOGOUT) {
-                                       logoutViewModel.logoutUser()
+                                        logoutViewModel.logoutUser()
                                     } else {
                                         navController.navigate(route) {
                                             popUpTo(Routes.FEED) {
@@ -114,37 +109,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun AppBar(
-        title: String,
-        showBackButton: Boolean,
-        onBackClick: () -> Unit
-    ) {
-        CenterAlignedTopAppBar(
-            windowInsets = TopAppBarDefaults.windowInsets,
-            title = {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            },
-            navigationIcon = {
-                if (showBackButton) {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                        )
-                    }
-                }
-            },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary
-            )
-        )
-    }
-    }
+}

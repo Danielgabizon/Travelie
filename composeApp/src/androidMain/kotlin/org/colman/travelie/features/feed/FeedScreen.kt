@@ -42,8 +42,8 @@ fun FeedScreen(
             FloatingActionButton(
                 onClick = onAddPost,
                 shape = RoundedCornerShape(50),
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
             ) {
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "New post")
             }

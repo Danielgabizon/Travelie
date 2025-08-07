@@ -1,5 +1,6 @@
 package org.colman.travelie.features.uploadPost
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,9 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import org.colman.travelie.R
 import org.colman.travelie.models.Post
 import org.colman.travelie.models.User
 import org.colman.travelie.ui.shared_components.Error
@@ -31,7 +35,6 @@ fun UploadPostScreen(
     when (uiState) {
         is UploadPostState.Idle,
         is UploadPostState.Error -> {
-
             val errorMessage = (uiState as? UploadPostState.Error)?.errorMessage
             UploadPostForm(
                 user = user,
@@ -74,13 +77,13 @@ private fun UploadPostForm(
             .fillMaxSize()
             .background(LightGray)
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(
             shape = MaterialTheme.shapes.large,
             elevation = CardDefaults.cardElevation(4.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
@@ -89,25 +92,41 @@ private fun UploadPostForm(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Upload Post", fontSize = 24.sp, color = Navy)
+                Text("Upload Post",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface)
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
-                    AsyncImage(
-                        model = user?.profilePicture,
-                        contentDescription = "Profile Image",
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(50))
-                    )
+
+                    if (user?.profilePicture != "" ) {
+                        AsyncImage(
+                            model = user?.profilePicture,
+                            contentDescription = "Profile Image",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(50)),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.default_avatar),
+                            contentDescription = "Profile Image",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(50))
+                                .weight(0.3f, fill = false)
+                        )
+                    }
+
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = "${user?.firstName} ${user?.lastName}",
-                        fontSize = 18.sp,
-                        color = Navy
+                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 20.sp),
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -118,13 +137,12 @@ private fun UploadPostForm(
                     onValueChange = { description = it },
                     placeholder = { Text("What's on your mind?") },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
+                        .fillMaxWidth().height(120.dp),
                     shape = MaterialTheme.shapes.medium,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Terracotta,
-                        unfocusedBorderColor = Lavender,
-                        cursorColor = Terracotta
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
+                        cursorColor = MaterialTheme.colorScheme.secondary
                     )
                 )
 
@@ -143,11 +161,13 @@ private fun UploadPostForm(
                             .padding(end = 8.dp),
                         shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Beige,
-                            contentColor = Navy
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            disabledContainerColor = MaterialTheme.colorScheme.tertiary,
+                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.3f)
                         )
                     ) {
-                        Text("Cancel")
+                        Text("Cancel", color = MaterialTheme.colorScheme.onSecondary,style = MaterialTheme.typography.labelLarge)
                     }
 
                     Button(
@@ -158,13 +178,14 @@ private fun UploadPostForm(
                         enabled = description.isNotBlank(),
                         shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Terracotta,
-                            contentColor = Color.White,
-                            disabledContainerColor = Beige,
-                            disabledContentColor = Navy.copy(alpha = 0.3f)
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            disabledContainerColor = MaterialTheme.colorScheme.tertiary,
+                            disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.3f)
                         )
                     ) {
-                        Text("Upload")
+                        Text("Upload", color = MaterialTheme.colorScheme.onSecondary,style = MaterialTheme.typography.labelLarge)
+
                     }
                 }
             }

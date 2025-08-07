@@ -43,7 +43,7 @@ fun DestinationsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(LightGray)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Row(
@@ -60,11 +60,11 @@ fun DestinationsScreen(
                     .weight(1f)
                     .padding(end = 8.dp),
                 singleLine = true,
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Terracotta,
-                    unfocusedBorderColor = Lavender,
-                    cursorColor = Terracotta
+                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
+                    cursorColor = MaterialTheme.colorScheme.secondary
                 )
             )
 
@@ -72,12 +72,14 @@ fun DestinationsScreen(
                 onClick = { viewModel.search(searchQuery) },
                 enabled = searchQuery.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Terracotta,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    disabledContainerColor = MaterialTheme.colorScheme.tertiary,
+                    disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.3f)
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = MaterialTheme.shapes.medium,
             ) {
-                Text("Search")
+                Text("Search", color = MaterialTheme.colorScheme.onSecondary,style = MaterialTheme.typography.labelLarge)
             }
         }
 
@@ -119,8 +121,10 @@ fun DestinationGridItem(destination: Destination) {
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(0.73f),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(
@@ -147,12 +151,13 @@ fun DestinationGridItem(destination: Destination) {
             ) {
                 Text(
                     text = destination.title ?: "",
-                    style = MaterialTheme.typography.titleMedium.copy(color = Navy),
-
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = destination.description ?: "",
-                    style = MaterialTheme.typography.bodySmall.copy(color = Color.DarkGray),
+                    style = MaterialTheme.typography.bodyMedium,
                     maxLines = 2,
                     textAlign = TextAlign.Center
                 )
@@ -160,11 +165,11 @@ fun DestinationGridItem(destination: Destination) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            destination.link?.let { link ->
+            destination.link.let { link ->
                 Text(
                     text = "View more",
-                    color = Terracotta,
-                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(bottom = 8.dp)

@@ -60,7 +60,8 @@ fun RegisterScreen(
                         password = password,
                         firstName = firstName.lowercase().replaceFirstChar { it.uppercaseChar() },
                         lastName = lastName.lowercase().replaceFirstChar { it.uppercaseChar() },
-                        bio = bio
+                        bio = bio,
+
                     )
                 },
                 onNavigateToLogin = onNavigateToLogin,
