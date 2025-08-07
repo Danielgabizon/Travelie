@@ -18,6 +18,7 @@ class RegisterViewModel(
     fun register(
         email: String,
         password: String,
+        username: String,
         firstName: String,
         lastName: String,
         bio: String
@@ -34,6 +35,7 @@ class RegisterViewModel(
                     val newUser = User(
                         uid = authUser.uid,
                         email = authUser.email,
+                        username = username,
                         firstName = firstName,
                         lastName = lastName,
                         bio = bio

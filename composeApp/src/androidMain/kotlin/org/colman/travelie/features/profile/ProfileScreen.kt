@@ -71,16 +71,20 @@ fun ProfileContent(user: User?) {
         shape = RectangleShape,
         modifier = Modifier
             .fillMaxWidth()
+
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp))
+        {
             Row(
                 modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
+                ) {
 
-            ) {
-
-                if (user?.profilePicture != "" ) {
+                if (user?.profilePicture != "") {
                     AsyncImage(
                         model = user?.profilePicture,
                         contentDescription = "Profile Image",
@@ -109,7 +113,7 @@ fun ProfileContent(user: User?) {
                     horizontalAlignment = Alignment.Start,
                 ) {
                     Text(
-                        text = "${user?.firstName ?: "First Name"} ${user?.lastName ?: "Last Name"}",
+                        text = "${user?.username}",
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleMedium
                     )
@@ -123,6 +127,13 @@ fun ProfileContent(user: User?) {
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text (
+                text = "${user?.firstName} ${user?.lastName}",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
 
 
     }

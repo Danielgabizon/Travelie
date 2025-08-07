@@ -15,7 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -115,7 +119,7 @@ fun PostItem(post: Post) {
                 }
 
                 Text(
-                    text = post.creatorName,
+                    text = post.creatorUsername,
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -135,14 +139,22 @@ fun PostItem(post: Post) {
                 )
             }
 
+
             if (post.description.isNotBlank()) {
                 Text(
-                    text = post.description,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(post.creatorUsername)
+                        }
+                        append(": ")
+                        append(post.description)
+                    },
                     style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(16.dp)
                 )
             }
+
         }
     }
 

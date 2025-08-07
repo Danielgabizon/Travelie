@@ -39,7 +39,7 @@ class UploadPostViewModel(
 
             val post = Post(
                 uid = user.uid,
-                creatorName = "${user.firstName} ${user.lastName}",
+                creatorUsername = user.username,
                 creatorImageUrl = user.profilePicture.orEmpty(),
                 description = description,
                 imageUrl = imageUrl,

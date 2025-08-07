@@ -124,7 +124,7 @@ private fun UploadPostForm(
 
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "${user?.firstName} ${user?.lastName}",
+                        text = user?.username ?: "",
                         style = MaterialTheme.typography.bodyMedium.copy(fontSize = 20.sp),
                         color = MaterialTheme.colorScheme.onSurface
                     )

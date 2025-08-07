@@ -36,6 +36,7 @@ fun RegisterScreen(
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var bio by remember { mutableStateOf("") }
@@ -46,11 +47,13 @@ fun RegisterScreen(
             RegisterForm(
                 email = email,
                 password = password,
+                username = username,
                 firstName = firstName,
                 lastName = lastName,
                 bio = bio,
                 onEmailChange = { email = it.trim() },
                 onPasswordChange = { password = it },
+                onUsernameChange = { username = it.trim() },
                 onFirstNameChange = { firstName = it.trim() },
                 onLastNameChange = { lastName = it.trim() },
                 onBioChange = { bio = it },
@@ -58,10 +61,10 @@ fun RegisterScreen(
                     viewModel.register(
                         email = email,
                         password = password,
+                        username = username,
                         firstName = firstName.lowercase().replaceFirstChar { it.uppercaseChar() },
                         lastName = lastName.lowercase().replaceFirstChar { it.uppercaseChar() },
                         bio = bio,
-
                     )
                 },
                 onNavigateToLogin = onNavigateToLogin,
@@ -78,11 +81,13 @@ fun RegisterScreen(
 private fun RegisterForm(
     email: String,
     password: String,
+    username: String,
     firstName: String,
     lastName: String,
     bio: String,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onUsernameChange: (String) -> Unit,
     onFirstNameChange: (String) -> Unit,
     onLastNameChange: (String) -> Unit,
     onBioChange: (String) -> Unit,
@@ -151,6 +156,19 @@ private fun RegisterForm(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = onUsernameChange,
+                    label = { Text("Username") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = registerTextFieldColors()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -193,8 +211,11 @@ private fun RegisterForm(
                 Button(
                     onClick = onRegisterClick,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = email.isNotBlank() && password.isNotBlank() &&
-                            firstName.isNotBlank() && lastName.isNotBlank(),
+                    enabled = email.isNotBlank() &&
+                            password.isNotBlank() &&
+                            username.isNotBlank() &&
+                            firstName.isNotBlank() &&
+                            lastName.isNotBlank(),
                     shape = MaterialTheme.shapes.medium,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondary,
