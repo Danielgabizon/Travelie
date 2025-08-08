@@ -34,7 +34,7 @@ class RegisterViewModel(
                     val uid = authUser.uid
 
                     //  upload profile picture to Firebase Storage
-                    val profileUrl = if (profileImageBytes != null && !profileImageBytes.isEmpty()) {
+                    val profileUrl = if (profileImageBytes != null) {
                         when (val upload = registerUseCases.uploadProfilePicture(
                             uid = uid,
                             username = username,

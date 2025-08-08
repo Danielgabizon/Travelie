@@ -173,15 +173,18 @@ class RemoteFirebaseRepository : FirebaseRepository {
         bytes: ByteArray,
         contentType: String
     ): Result<String, StorageError> = try {
+
         val fileName = "profile_${uid}.bin"
         val ref = storage.reference.child("users/$username/$fileName")
 
+        val data = PlatformData(bytes).toGitLiveData()
         val meta = storageMetadata {
             this.contentType = contentType
             setCustomMetadata("uid", uid)
             setCustomMetadata("username", username)
         }
-        val data = PlatformData(bytes).toGitLiveData()
+
+
         ref.putData(data, meta)
         val url = ref.getDownloadUrl()
 

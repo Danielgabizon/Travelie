@@ -52,7 +52,6 @@ fun RegisterScreen(
     var bio by remember { mutableStateOf("") }
 
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    var profileImageBytes by remember { mutableStateOf<ByteArray?>(null) }
 
     val context = LocalContext.current
 
@@ -82,8 +81,8 @@ fun RegisterScreen(
                 onProfileImagePick = { launcher.launch("image/*") },
                 onRegisterClick = {
                     val (bytes, mime) = selectedImageUri?.let { uri ->
-                        val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
                         val data = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                        val mimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
                         data to mimeType
                     } ?: (null to null)
 
