@@ -14,7 +14,7 @@ private val LightColorScheme = lightColorScheme(
     onSecondary = White,      // text/icon color on secondary
 
     tertiary = Beige,         // used for disabled states or alternate surfaces
-    onTertiary = Navy,        // text/icon color on tertiary
+    onTertiary = White,        // text/icon color on tertiary
 
     background = LightGray,   // app background color
     surface = White,          // card and container background

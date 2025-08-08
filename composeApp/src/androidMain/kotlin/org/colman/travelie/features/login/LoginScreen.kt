@@ -1,28 +1,46 @@
 package org.colman.travelie.features.login
-import org.colman.travelie.ui.theme.*
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.Image
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.withStyle
-import org.colman.travelie.R
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import org.colman.travelie.R
 import org.colman.travelie.ui.shared_components.Error
 import org.colman.travelie.ui.shared_components.Spinner
 import org.koin.compose.viewmodel.koinViewModel
+
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
@@ -34,8 +52,7 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
 
     when (uiState) {
-        is LoginState.Idle,
-        is LoginState.Error -> {
+        is LoginState.Idle, is LoginState.Error -> {
             LoginForm(
                 email = email,
                 password = password,
@@ -49,7 +66,7 @@ fun LoginScreen(
         is LoginState.Loading -> {
             Spinner(modifier = Modifier.fillMaxSize())
         }
-        else -> {}
+        is LoginState.Loaded -> {}
     }
 }
 
@@ -68,17 +85,19 @@ private fun LoginForm(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-
+        // Logo Section
         Image(
             painter = painterResource(id = R.drawable.satic_logo),
             contentDescription = "App Logo",
             modifier = Modifier.size(200.dp)
         )
 
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Login Card
         Card(
             shape = MaterialTheme.shapes.large,
             elevation = CardDefaults.cardElevation(4.dp),
@@ -99,39 +118,17 @@ private fun LoginForm(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = onEmailChange,
-                    label = { Text("Email") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    shape = MaterialTheme.shapes.medium,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
-                        cursorColor = MaterialTheme.colorScheme.secondary
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = onPasswordChange,
-                    label = { Text("Password") },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
-                        cursorColor = MaterialTheme.colorScheme.secondary
-                    )
+                // Input Fields
+                LoginTextFields(
+                    email = email,
+                    onEmailChange = onEmailChange,
+                    password = password,
+                    onPasswordChange = onPasswordChange
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                // Login Button
                 Button(
                     onClick = onLoginClick,
                     modifier = Modifier.fillMaxWidth(),
@@ -141,17 +138,17 @@ private fun LoginForm(
                         containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = MaterialTheme.colorScheme.onSecondary,
                         disabledContainerColor = MaterialTheme.colorScheme.tertiary,
-                        disabledContentColor = MaterialTheme.colorScheme.onTertiary.copy(alpha = 0.3f)
+                        disabledContentColor = MaterialTheme.colorScheme.onTertiary,
                     )
-
                 ) {
-                    Text("Log In", color = MaterialTheme.colorScheme.onSecondary,style = MaterialTheme.typography.labelLarge)
+                    Text("Log In", style = MaterialTheme.typography.labelLarge)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // Register Redirect
                 Text(
-                    buildAnnotatedString {
+                    text = buildAnnotatedString {
                         append("Don't have an account? ")
                         withStyle(
                             style = SpanStyle(
@@ -169,10 +166,50 @@ private fun LoginForm(
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
-
+        // Error Message
         errorMessage?.let {
+            Spacer(modifier = Modifier.height(16.dp))
             Error(it, modifier = Modifier.fillMaxWidth())
         }
     }
 }
+
+@Composable
+private fun LoginTextFields(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    password: String,
+    onPasswordChange: (String) -> Unit
+) {
+    Column {
+        OutlinedTextField(
+            value = email,
+            onValueChange = onEmailChange,
+            label = { Text("Email") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            shape = MaterialTheme.shapes.medium,
+            colors = loginTextFieldColors()
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = onPasswordChange,
+            label = { Text("Password") },
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium,
+            colors = loginTextFieldColors()
+        )
+    }
+}
+
+@Composable
+private fun loginTextFieldColors(): TextFieldColors = OutlinedTextFieldDefaults.colors(
+    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+    unfocusedBorderColor = Color(0xFFCCCCCC),
+    cursorColor = MaterialTheme.colorScheme.secondary
+)
