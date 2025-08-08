@@ -24,7 +24,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(project.dependencies.platform(libs.firebase.bom.v33160))
+            implementation(project.dependencies.platform(libs.firebase.bom))
 
         }
         commonMain.dependencies {
@@ -71,8 +71,14 @@ android {
 }
 
 dependencies {
-    implementation(platform(libs.firebase.bom.v33160))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.common.ktx)
+
+
     debugImplementation(compose.uiTooling)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.material3)
@@ -83,9 +89,7 @@ dependencies {
     implementation(libs.coil.compose.v250)
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
     implementation(libs.core.splashscreen)
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
+
 
 }
 

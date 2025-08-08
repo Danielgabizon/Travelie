@@ -5,6 +5,7 @@ import org.colman.travelie.models.Post
 import org.colman.travelie.models.Posts
 import org.colman.travelie.models.User
 
+
 interface FirebaseRepository {
     // Authentication methods
     suspend fun login(email: String, password: String): Result<AuthUser, AuthError>
@@ -19,5 +20,7 @@ interface FirebaseRepository {
     suspend fun getPosts(uid: String?): Result<Posts, PostDBError>
     suspend fun createPost(post: Post): Result<Post, PostDBError>
 
+    // Storage
+    suspend fun uploadProfilePicture(uid: String, username: String, bytes: ByteArray, contentType: String): Result<String, StorageError>
 
 }

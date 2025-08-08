@@ -2,7 +2,6 @@ package org.colman.travelie.features.register
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
 import org.colman.travelie.auth.SessionManager
 import org.colman.travelie.features.BaseViewModel
 import org.colman.travelie.data.Result
@@ -21,7 +20,9 @@ class RegisterViewModel(
         username: String,
         firstName: String,
         lastName: String,
-        bio: String
+        bio: String,
+        profileImageBytes:ByteArray? = null,
+        profileImageContentType: String? = null
     ) {
         scope.launch {
             _uiState.emit(RegisterState.Loading)
@@ -30,19 +31,33 @@ class RegisterViewModel(
             when (val registerResult = registerUseCases.register(email, password)) {
                 is Result.Success -> {
                     val authUser = registerResult.data!!
+                    val uid = authUser.uid
 
-                    // create full user model
+                    //  upload profile picture to Firebase Storage
+                    val profileUrl = if (profileImageBytes != null && !profileImageBytes.isEmpty()) {
+                        when (val upload = registerUseCases.uploadProfilePicture(
+                            uid = uid,
+                            username = username,
+                            bytes = profileImageBytes,
+                            contentType = profileImageContentType ?: "image/jpeg"
+                        )) {
+                            is Result.Success -> upload.data ?: ""
+                            is Result.Failure -> ""
+                        }
+                    } else ""
+
+                    // create User object
                     val newUser = User(
-                        uid = authUser.uid,
+                        uid = uid,
                         email = authUser.email,
                         username = username,
                         firstName = firstName,
                         lastName = lastName,
-                        bio = bio
+                        bio = bio,
+                        profilePicture = profileUrl
                     )
 
-
-                    // save to Firestore
+                    // save user to Firestore
                     when (val saveResult = registerUseCases.saveUser(newUser)) {
                         is Result.Success -> {
                             sessionManager.setUser(saveResult.data) // store user in session manager

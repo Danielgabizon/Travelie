@@ -40,15 +40,22 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
 
+
+
         }
         commonMain.dependencies {
+            api(libs.koin.core)
+
+            implementation(libs.firebase.common)
+            implementation(libs.firebase.auth)
+
+            implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.firestore)
             implementation(libs.firebase.common)
             implementation(libs.firebase.auth)
-            implementation(project.dependencies.platform(libs.firebase.bom))
-            api(libs.koin.core)
-            implementation(libs.koin.compose)
-            implementation(libs.koin.test)
+            implementation(libs.firebase.storage)
+
+
 
             implementation(libs.kotlinx.coroutines.core)
 

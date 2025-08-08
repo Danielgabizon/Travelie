@@ -9,6 +9,7 @@ import org.colman.travelie.domain.Auth.Register
 import org.colman.travelie.domain.Auth.Logout
 import org.colman.travelie.domain.User.SaveUser
 import org.colman.travelie.domain.User.GetUserById
+import org.colman.travelie.domain.User.UploadProfilePicture
 import org.colman.travelie.domain.Post.GetPosts
 import org.colman.travelie.domain.Post.CreatePost
 import org.colman.travelie.features.destinations.DestinationsUseCases
@@ -66,6 +67,7 @@ val domainModule = module {
 
     factoryOf(::SaveUser)
     factoryOf(::GetUserById)
+    factoryOf(::UploadProfilePicture)
 
     factoryOf(::GetPosts)
     factoryOf(::CreatePost)

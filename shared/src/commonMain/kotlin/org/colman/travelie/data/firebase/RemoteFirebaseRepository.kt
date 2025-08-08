@@ -6,12 +6,21 @@ import org.colman.travelie.data.Result
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.firestore.firestore
+import dev.gitlive.firebase.storage.storage
+import dev.gitlive.firebase.storage.*
+import dev.gitlive.firebase.storage.Data
+
+
 import kotlin.uuid.ExperimentalUuidApi
 
 import org.colman.travelie.models.AuthUser
 import org.colman.travelie.models.Post
 import org.colman.travelie.models.Posts
 import kotlin.uuid.Uuid
+
+expect class PlatformData(bytes: ByteArray) {
+    fun toGitLiveData(): Data
+}
 
 data class AuthError(
     override val message: String
@@ -24,14 +33,22 @@ data class PostDBError(
     override val message: String
 ) : Error
 
+data class StorageError(
+    override val message: String
+) : Error
+
+
 
 
 
 class RemoteFirebaseRepository : FirebaseRepository {
     private val auth = Firebase.auth
     private val firestore = Firebase.firestore
+    private val storage = Firebase.storage
+
     private val usersCollection = firestore.collection("users")
     private val postsCollection = firestore.collection("posts")
+
 
 
     /* Authentication methods */
@@ -113,6 +130,7 @@ class RemoteFirebaseRepository : FirebaseRepository {
         }
     }
 
+
     /* Post methods */
 
     override suspend fun getPosts(uid: String?): Result<Posts, PostDBError> {
@@ -149,9 +167,26 @@ class RemoteFirebaseRepository : FirebaseRepository {
             Result.Failure(PostDBError("Create post error: ${e.message ?: "Unknown error"}"))
         }
     }
+    override suspend fun uploadProfilePicture(
+        uid: String,
+        username: String,
+        bytes: ByteArray,
+        contentType: String
+    ): Result<String, StorageError> = try {
+        val fileName = "profile_${uid}.bin"
+        val ref = storage.reference.child("users/$username/$fileName")
 
+        val meta = storageMetadata {
+            this.contentType = contentType
+            setCustomMetadata("uid", uid)
+            setCustomMetadata("username", username)
+        }
+        val data = PlatformData(bytes).toGitLiveData()
+        ref.putData(data, meta)
+        val url = ref.getDownloadUrl()
 
-
-
-
+        Result.Success(url)
+    } catch (e: Exception) {
+        Result.Failure(StorageError("Upload error: ${e.message ?: "Unknown error"}"))
+    }
 }
