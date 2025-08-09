@@ -6,7 +6,6 @@ import kotlinx.coroutines.launch
 import org.colman.travelie.auth.SessionManager
 import org.colman.travelie.data.Result
 import org.colman.travelie.features.BaseViewModel
-import org.colman.travelie.models.User
 import org.colman.travelie.utils.eventBus.Event
 import org.colman.travelie.utils.eventBus.EventBus
 
@@ -18,7 +17,7 @@ class ProfileViewModel(
     private val _uiState: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState.Loading)
     override val uiState: StateFlow<ProfileState> get() = _uiState
 
-    val user: StateFlow<User?> = sessionManager.currentUser
+    val user = sessionManager.currentUser
 
 
     init {
@@ -28,11 +27,13 @@ class ProfileViewModel(
 
     private fun loadUserPosts() {
         scope.launch {
-            if (user.value == null) {
+            val currentUser = user.value
+
+            if (currentUser == null) {
                 _uiState.emit(ProfileState.Error("User not logged in"))
                 return@launch
             }
-            when (val postsResult = profileUseCases.getPosts(user.value?.uid)) {
+            when (val postsResult = profileUseCases.getPosts(currentUser.uid)) {
                 is Result.Success -> {
                     _uiState.emit(ProfileState.Loaded(postsResult.data!!))
                 }
@@ -55,6 +56,7 @@ class ProfileViewModel(
                         _uiState.emit(ProfileState.Loading)
                         loadUserPosts()
                     }
+                    else -> {}
                 }
             }
         }

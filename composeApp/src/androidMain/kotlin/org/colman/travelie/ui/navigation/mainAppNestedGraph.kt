@@ -3,8 +3,11 @@ package org.colman.travelie.ui.navigation
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
+import org.colman.travelie.features.comments.CommentsScreen
 
 import org.colman.travelie.features.destinations.DestinationsScreen
 import org.colman.travelie.features.feed.FeedScreen
@@ -20,11 +23,14 @@ fun NavGraphBuilder.mainAppNestedGraph(navController: NavController) {
         composable(Routes.FEED) {
              FeedScreen(
                  onAddPost = { navController.navigate(Routes.UPLOAD_POST) },
-                 navController = navController,)
+                 onCommentsClick = { postId ->
+                     navController.navigate("${Routes.COMMENTS}/$postId")
+                 }
+             )
         }
         composable(Routes.UPLOAD_POST) {
             UploadPostScreen(
-                onPostUploaded = {
+                onPostUploaded = { _ ->
                     navController.popBackStack()
                 },
                 onCancel = {
@@ -32,6 +38,14 @@ fun NavGraphBuilder.mainAppNestedGraph(navController: NavController) {
                 },
             )
         }
+        composable(
+            route = Routes.COMMENTS_WITH_ARG,
+            arguments = listOf(navArgument("postId") { type = NavType.StringType })
+        ) { entry ->
+            val postId = entry.arguments?.getString("postId") ?: return@composable
+            CommentsScreen(postId = postId)
+        }
+
         composable(Routes.DESTINATIONS) {
             DestinationsScreen()
         }

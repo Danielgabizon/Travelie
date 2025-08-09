@@ -12,12 +12,16 @@ import org.colman.travelie.domain.User.GetUserById
 import org.colman.travelie.domain.User.UploadProfilePicture
 import org.colman.travelie.domain.Post.GetPosts
 import org.colman.travelie.domain.Post.CreatePost
+import org.colman.travelie.domain.Post.UploadPostPicture
+import org.colman.travelie.domain.Comment.GetComments
+import org.colman.travelie.domain.Comment.AddComment
+import org.colman.travelie.domain.Comment.IncrementCommentCount
 import org.colman.travelie.features.destinations.DestinationsUseCases
 import org.colman.travelie.features.login.LoginUseCases
 import org.colman.travelie.features.register.RegisterUseCases
 import org.colman.travelie.features.logout.LogoutUseCases
-
 import org.colman.travelie.features.feed.FeedUseCases
+import org.colman.travelie.features.comments.CommentsUseCases
 import org.colman.travelie.features.profile.ProfileUseCases
 import org.colman.travelie.features.uploadPost.UploadPostUseCases
 import io.ktor.client.HttpClient
@@ -71,15 +75,25 @@ val domainModule = module {
 
     factoryOf(::GetPosts)
     factoryOf(::CreatePost)
+    factoryOf(::UploadPostPicture)
+
+    factoryOf(::GetComments)
+    factoryOf(::AddComment)
+    factoryOf(::IncrementCommentCount)
+
 
     factoryOf(::DestinationsUseCases)
+
     factoryOf(::LoginUseCases)
     factoryOf(::RegisterUseCases)
+    factoryOf(::LogoutUseCases)
 
     factoryOf(::FeedUseCases)
+    factoryOf(::CommentsUseCases)
     factoryOf(::UploadPostUseCases)
+
     factoryOf(::ProfileUseCases)
-    factoryOf(::LogoutUseCases)
+
 
 }
 

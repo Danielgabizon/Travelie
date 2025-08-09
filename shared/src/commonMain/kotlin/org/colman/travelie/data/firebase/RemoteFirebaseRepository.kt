@@ -5,6 +5,7 @@ import org.colman.travelie.data.Error
 import org.colman.travelie.data.Result
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
+import dev.gitlive.firebase.firestore.FieldValue
 import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.storage.storage
 import dev.gitlive.firebase.storage.*
@@ -14,6 +15,8 @@ import dev.gitlive.firebase.storage.Data
 import kotlin.uuid.ExperimentalUuidApi
 
 import org.colman.travelie.models.AuthUser
+import org.colman.travelie.models.Comment
+import org.colman.travelie.models.Comments
 import org.colman.travelie.models.Post
 import org.colman.travelie.models.Posts
 import kotlin.uuid.Uuid
@@ -32,6 +35,9 @@ data class UserDBError(
 data class PostDBError(
     override val message: String
 ) : Error
+data class CommentDbError(
+    override val message: String
+) : Error
 
 data class StorageError(
     override val message: String
@@ -48,6 +54,7 @@ class RemoteFirebaseRepository : FirebaseRepository {
 
     private val usersCollection = firestore.collection("users")
     private val postsCollection = firestore.collection("posts")
+    private val commentsCollection = firestore.collection("comments")
 
 
 
@@ -110,6 +117,31 @@ class RemoteFirebaseRepository : FirebaseRepository {
             Result.Failure(UserDBError("Save user error: ${e.message ?: "Unknown error"}"))
         }
     }
+    override suspend fun uploadProfilePicture(
+        uid: String,
+        username: String,
+        bytes: ByteArray,
+        contentType: String
+    ): Result<String, StorageError> = try {
+
+        val fileName = "profile_${uid}.bin"
+        val ref = storage.reference.child("users/$username/$fileName")
+
+        val data = PlatformData(bytes).toGitLiveData()
+        val meta = storageMetadata {
+            this.contentType = contentType
+            setCustomMetadata("uid", uid)
+            setCustomMetadata("username", username)
+        }
+
+
+        ref.putData(data, meta)
+        val url = ref.getDownloadUrl()
+
+        Result.Success(url)
+    } catch (e: Exception) {
+        Result.Failure(StorageError("Upload error: ${e.message ?: "Unknown error"}"))
+    }
 
 
     override suspend fun getUserById(uid: String): Result<User, UserDBError> {
@@ -150,46 +182,81 @@ class RemoteFirebaseRepository : FirebaseRepository {
             Result.Failure(PostDBError("Get posts error: ${e.message ?: "Unknown error"}"))
         }
     }
-    @OptIn(ExperimentalUuidApi::class)
     override suspend fun createPost(post: Post): Result<Post, PostDBError> {
         return try {
-            if (post.uid.isBlank()) {
-                return Result.Failure(PostDBError("Post missing creator uid"))
-            }
-
-            val postWithId = post.copy(postId = Uuid.random().toString())
-
-            postsCollection.document(postWithId.postId).set(postWithId)
-
-            Result.Success(postWithId)
-
+            postsCollection
+                .document(post.postId)
+                .set(post)
+            Result.Success(post)
         } catch (e: Exception) {
             Result.Failure(PostDBError("Create post error: ${e.message ?: "Unknown error"}"))
         }
     }
-    override suspend fun uploadProfilePicture(
+    override suspend fun uploadPostPicture(
+        postId: String,
         uid: String,
         username: String,
         bytes: ByteArray,
         contentType: String
     ): Result<String, StorageError> = try {
 
-        val fileName = "profile_${uid}.bin"
-        val ref = storage.reference.child("users/$username/$fileName")
+        val fileName = "post_${postId}.bin"
+        val ref = storage.reference.child("posts/$username/$fileName")
 
         val data = PlatformData(bytes).toGitLiveData()
         val meta = storageMetadata {
             this.contentType = contentType
             setCustomMetadata("uid", uid)
+            setCustomMetadata("postId", postId)
             setCustomMetadata("username", username)
         }
-
 
         ref.putData(data, meta)
         val url = ref.getDownloadUrl()
 
         Result.Success(url)
+
     } catch (e: Exception) {
         Result.Failure(StorageError("Upload error: ${e.message ?: "Unknown error"}"))
     }
+
+    /* Comment methods  */
+    override suspend fun getComments(postId: String): Result<Comments,CommentDbError> {
+            return try {
+                val snapshot = commentsCollection
+                    .where { "postId" equalTo postId }
+                    .get()
+
+                val comments = snapshot.documents.map { it.data<Comment>() }
+                Result.Success(Comments(items = comments))
+
+            } catch (e: Exception) {
+                Result.Failure(CommentDbError("Get comments error: ${e.message ?: "Unknown error"}"))
+            }
+    }
+
+
+    override suspend fun addComment(comment: Comment): Result<Comment, CommentDbError> {
+        return try {
+            commentsCollection
+                .document(comment.commentId)
+                .set(comment)
+            Result.Success(comment)
+        } catch (e: Exception) {
+            Result.Failure(CommentDbError("Add comment error: ${e.message ?: "Unknown error"}"))
+        }
+    }
+    override suspend fun incrementCommentCount(postId: String): Result<Unit, CommentDbError> {
+        return try {
+            val postRef = postsCollection.document(postId)
+            postRef.update(mapOf("commentCount" to FieldValue.increment(1)))
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Failure(CommentDbError("Increment comment count error: ${e.message ?: "Unknown error"}"))
+        }
+    }
+
+
+
+
 }

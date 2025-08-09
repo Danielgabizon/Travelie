@@ -89,7 +89,7 @@ fun ProfileContent(user: User?) {
                         model = user?.profilePicture,
                         contentDescription = "Profile Image",
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(80.dp)
                             .clip(RoundedCornerShape(50)),
                         contentScale = ContentScale.Crop
                     )
@@ -158,6 +158,7 @@ fun PostsContent(
             )
         }
     } else {
+        val postsWithImages = posts.items.filter { it.imageUrl.isNotBlank() }
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
             state = lazyGridState,
@@ -167,7 +168,7 @@ fun PostsContent(
                 .fillMaxSize()
 
         ) {
-            items(posts.items) { post ->
+            items(postsWithImages) { post ->
                 PostItem(post)
             }
         }

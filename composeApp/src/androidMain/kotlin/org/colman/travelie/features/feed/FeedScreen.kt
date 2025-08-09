@@ -1,13 +1,16 @@
 package org.colman.travelie.features.feed
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -41,13 +44,10 @@ import org.koin.compose.viewmodel.koinViewModel
 fun FeedScreen(
     onAddPost: () -> Unit,
     viewModel: FeedViewModel = koinViewModel(),
-    navController: NavController,
+    onCommentsClick: (postId: String) -> Unit,
     ) {
 
     val uiState = viewModel.uiState.collectAsState().value
-    val currentBackStackEntry = navController.currentBackStackEntry
-
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -66,12 +66,13 @@ fun FeedScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp)
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp)
             ) {
                 when (uiState) {
                     is FeedState.Loading -> Spinner(modifier = Modifier.fillMaxSize())
                     is FeedState.Error -> Error(message = uiState.errorMessage)
-                    is FeedState.Loaded -> PostsContent(uiState.posts)
+                    is FeedState.Loaded -> PostsContent(uiState.posts, onCommentsClick)
                 }
             }
         }
@@ -80,6 +81,7 @@ fun FeedScreen(
 @Composable
 fun PostsContent(
     posts: Posts,
+    onCommentsClick: (postId: String) -> Unit
 ) {
     if (posts.items.isEmpty()) {
         Text(
@@ -92,78 +94,117 @@ fun PostsContent(
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             items(posts.items) { post ->
-                PostItem(post)
+                PostItem(post, onCommentsClick)
             }
         }
+    }
+}@Composable
+fun PostItem(post: Post, onCommentsClick: (postId: String) -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            if (post.creatorImageUrl.isNotBlank()) {
+                AsyncImage(
+                    model = post.creatorImageUrl,
+                    contentDescription = "Profile Image",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(50)),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.default_avatar),
+                    contentDescription = "Default Profile Image",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(50)),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            Text(
+                text = post.creatorUsername,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleSmall
+            )
+        }
+
+
+        val hasImage = post.imageUrl.isNotBlank()
+        val hasDescription = post.description.isNotBlank()
+
+        if (hasImage) {
+            Spacer(modifier = Modifier.height(12.dp))
+            AsyncImage(
+                model = post.imageUrl,
+                contentDescription = post.description,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 150.dp, max = 500.dp),
+                contentScale = ContentScale.Fit
+            )
+        }
+
+
+        // --- Icon placement ---
+        if (hasImage && hasDescription) {
+            CommentButton(post, onCommentsClick)
+            DescriptionText(post)
+        } else if (hasImage) {
+            CommentButton(post, onCommentsClick)
+        } else if (hasDescription) {
+            DescriptionText(post)
+            CommentButton(post, onCommentsClick)
+        }
+
+
     }
 }
+
 @Composable
-fun PostItem(post: Post) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (post.creatorImageUrl.isNotBlank()) {
-                    AsyncImage(
-                        model = post.creatorImageUrl,
-                        contentDescription = "Profile Image",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(50)),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(id = R.drawable.default_avatar),
-                        contentDescription = "Default Profile Image",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(50)),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-
-                Text(
-                    text = post.creatorUsername,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
+private fun DescriptionText(post: Post) {
+    Text(
+        text = buildAnnotatedString {
             if (post.imageUrl.isNotBlank()) {
-                AsyncImage(
-                    model = post.imageUrl,
-                    contentDescription = post.description,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(500.dp) // or any height you want
-                        .clip(RoundedCornerShape(10.dp)),
-                    contentScale = ContentScale.Inside
-                )
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(post.creatorUsername)
+                }
+                append(": ")
             }
-
-
-            if (post.description.isNotBlank()) {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(post.creatorUsername)
-                        }
-                        append(": ")
-                        append(post.description)
-                    },
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-
-        }
+            append(post.description)
+        },
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.padding(
+            start = 16.dp,
+            top = 8.dp))
     }
+
+@Composable
+fun CommentButton(post: Post, onClick: (String) -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        IconButton(onClick = { onClick(post.postId) }) {
+            Icon(
+                imageVector = Icons.Default.Comment,
+                contentDescription = "Comments"
+            )
+        }
+        Text(
+            text = post.commentCount.toString(),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
 

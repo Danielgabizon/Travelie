@@ -39,13 +39,22 @@ fun App() {
         Routes.FEED -> "Feed"
         Routes.PROFILE -> "Profile"
         Routes.DESTINATIONS -> "Destinations"
+        Routes.UPLOAD_POST -> "Upload Post"
+        Routes.COMMENTS_WITH_ARG -> "Comments"
         else -> ""
     }
 
     val showBars = currentRoute in listOf(
         Routes.FEED,
+        Routes.UPLOAD_POST,
+        Routes.COMMENTS_WITH_ARG,
         Routes.PROFILE,
         Routes.DESTINATIONS
+    )
+
+    val showBackArrow = currentRoute in listOf(
+        Routes.UPLOAD_POST,
+        Routes.COMMENTS_WITH_ARG
     )
 
     LaunchedEffect(user) {
@@ -61,7 +70,7 @@ fun App() {
                 if (showBars) {
                     AppBar(
                         title = currentTopBarTitle,
-                        showBackButton = currentRoute != Routes.FEED,
+                        showBackButton = showBackArrow,
                         onBackClick = { navController.popBackStack() }
                     )
                 }

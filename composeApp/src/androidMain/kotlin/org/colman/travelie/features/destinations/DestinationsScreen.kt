@@ -6,12 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,25 +48,28 @@ fun DestinationsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 label = { Text("Search destinations") },
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),
+                    .weight(2f),
                 singleLine = true,
                 shape = MaterialTheme.shapes.medium,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = MaterialTheme.colorScheme.secondary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f),
                     cursorColor = MaterialTheme.colorScheme.secondary
-                )
+                ),
             )
 
             Button(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(52.dp),
                 onClick = { viewModel.search(searchQuery) },
                 enabled = searchQuery.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(

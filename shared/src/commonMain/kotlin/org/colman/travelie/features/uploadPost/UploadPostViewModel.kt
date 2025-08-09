@@ -11,11 +11,13 @@ import org.colman.travelie.auth.SessionManager
 import org.colman.travelie.data.Result
 import org.colman.travelie.features.BaseViewModel
 import org.colman.travelie.utils.eventBus.EventBus
+import kotlin.uuid.Uuid
+import kotlin.uuid.ExperimentalUuidApi
 
 
 class UploadPostViewModel(
     private val uploadPostUseCases: UploadPostUseCases,
-    private val sessionManager: SessionManager
+    sessionManager: SessionManager
 ) : BaseViewModel<UploadPostState>() {
 
     private val _uiState: MutableStateFlow<UploadPostState> = MutableStateFlow(UploadPostState.Idle)
@@ -23,27 +25,44 @@ class UploadPostViewModel(
 
     val user = sessionManager.currentUser
 
-
+    @OptIn(ExperimentalUuidApi::class)
     fun uploadPost(
         description: String,
-        imageUrl: String
+        postImageBytes:ByteArray? = null,
+        postImageContentType: String? = null
     ) {
         scope.launch {
-
+            val currentUser = user.value
             _uiState.emit(UploadPostState.Loading)
 
-            val user = sessionManager.currentUser.value
-            if (user == null) {
+            if (currentUser == null) {
                 _uiState.emit(UploadPostState.Error("User not logged in"))
                 return@launch
             }
 
+            val postId = Uuid.random().toString()
+
+            val postUrl = if (postImageBytes != null) {
+                when (val upload = uploadPostUseCases.uploadPostPicture(
+                    postId = postId,
+                    uid = currentUser.uid,
+                    username = currentUser.username,
+                    bytes = postImageBytes,
+                    contentType = postImageContentType ?: "image/jpeg"
+                )) {
+                    is Result.Success -> upload.data ?: ""
+                    is Result.Failure -> ""
+                }
+            } else ""
+
             val post = Post(
-                uid = user.uid,
-                creatorUsername = user.username,
-                creatorImageUrl = user.profilePicture.orEmpty(),
+                postId = postId,
+                uid = currentUser.uid,
+                creatorUsername = currentUser.username,
+                creatorImageUrl = currentUser.profilePicture.orEmpty(),
                 description = description,
-                imageUrl = imageUrl,
+                imageUrl = postUrl
+                ,
             )
 
             when (val result = uploadPostUseCases.createPost(post)) {
@@ -51,9 +70,7 @@ class UploadPostViewModel(
                     _uiState.emit(UploadPostState.Loaded(result.data!!))
                     // notify that the post has been uploaded
                     EventBus.emit(Event.PostUploaded)
-
                 }
-
                 is Result.Failure -> _uiState.emit(
                     UploadPostState.Error(result.error?.message ?: "Unknown error")
                 )

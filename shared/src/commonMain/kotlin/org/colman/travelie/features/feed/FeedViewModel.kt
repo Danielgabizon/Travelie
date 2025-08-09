@@ -36,10 +36,11 @@ class FeedViewModel(
         scope.launch {
             EventBus.collectEvents { event ->
                 when (event) {
-                    Event.PostUploaded -> {
+                    Event.PostUploaded, Event.CommentAdded -> {
                         _uiState.emit(FeedState.Loading)
                         getPosts()
                     }
+
                 }
             }
         }
