@@ -4,12 +4,16 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +43,7 @@ fun UploadPostScreen(
     onPostUploaded: (Post) -> Unit,
     onCancel: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
     val context = LocalContext.current
     val uiState by uploadPostViewModel.uiState.collectAsState()
     val user by uploadPostViewModel.user.collectAsState()
@@ -70,7 +75,8 @@ fun UploadPostScreen(
                     )
                 },
                 onCancel = onCancel,
-                errorMessage =(uiState as? UploadPostState.Error)?.errorMessage
+                errorMessage =(uiState as? UploadPostState.Error)?.errorMessage ,
+                scrollState = scrollState
 
             )
         }
@@ -92,12 +98,15 @@ private fun UploadPostForm(
     onImagePick: () -> Unit,
     onUploadClick: () -> Unit,
     onCancel: () -> Unit,
-    errorMessage: String?
+    errorMessage: String?,
+    scrollState: ScrollState
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(scrollState)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -226,7 +235,7 @@ private fun UploadImagePicker(
                 if (selectedImageUri != null) {
                     Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 150.dp)
+                        .size(350.dp)
                 } else {
                     Modifier.wrapContentSize()
                 }
@@ -244,10 +253,9 @@ private fun UploadImagePicker(
                         .build()
                 ),
                 contentDescription = "Selected Image",
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
+                    .fillMaxSize()
             )
         } else {
             Text(

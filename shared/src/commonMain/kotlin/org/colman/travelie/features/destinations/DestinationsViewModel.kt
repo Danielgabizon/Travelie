@@ -21,8 +21,7 @@ class DestinationsViewModel(
 
     fun searchByCurrentLocation() {
         scope.launch {
-            val locationResult = locationProvider.getCurrentLocation()
-            when (locationResult) {
+            when (val locationResult = locationProvider.getCurrentLocation()) {
                 is Result.Failure -> {
                     _uiState.emit(DestinationsState.Error(locationResult.error?.message ?: "Unknown error"))
                 }

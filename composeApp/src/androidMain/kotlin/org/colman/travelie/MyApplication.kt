@@ -8,12 +8,10 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 
 
-class MyApplication: Application() { // Application class runs before the first activity is created
-    // Great place to initialize global stuff — like Koin.
+class MyApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("FirebaseDebug", "Firebase initialized: ${FirebaseApp.getApps(this).isNotEmpty()}")
 
         initKoin {
             androidLogger()

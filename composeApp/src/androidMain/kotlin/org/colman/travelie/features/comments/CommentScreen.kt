@@ -32,10 +32,8 @@ import org.koin.core.parameter.parametersOf
 @Composable
 
 
-fun CommentsScreen(postId: String) {
-    val commentsViewModel: CommentsViewModel =
-        koinViewModel(parameters = { parametersOf(postId) })
-
+fun CommentsScreen(postId: String, commentsViewModel: CommentsViewModel = koinViewModel(parameters = { parametersOf(postId) }))
+{
     val uiState by commentsViewModel.uiState.collectAsState()
     val submitState by commentsViewModel.submitState.collectAsState()
     val user by commentsViewModel.user.collectAsState()

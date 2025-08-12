@@ -143,14 +143,19 @@ fun PostItem(post: Post, onCommentsClick: (postId: String) -> Unit) {
 
         if (hasImage) {
             Spacer(modifier = Modifier.height(12.dp))
-            AsyncImage(
-                model = post.imageUrl,
-                contentDescription = post.description,
+            Box (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 150.dp, max = 500.dp),
-                contentScale = ContentScale.Fit
-            )
+                    .size(350.dp)
+            ) {
+                AsyncImage(
+                    model = post.imageUrl,
+                    contentDescription = post.description,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
 
 
