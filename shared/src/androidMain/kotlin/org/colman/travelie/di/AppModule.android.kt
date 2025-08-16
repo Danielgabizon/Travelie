@@ -1,5 +1,6 @@
 package org.colman.travelie.di
 
+import android.annotation.SuppressLint
 import org.koin.core.module.Module
 import org.colman.travelie.features.destinations.DestinationsViewModel
 import org.colman.travelie.features.feed.FeedViewModel
@@ -23,6 +24,7 @@ import org.koin.android.ext.koin.androidContext
 
 
 
+@SuppressLint("NewApi")
 actual val platformModule: Module = module {
     single<HttpClientEngine> { OkHttp.create() }
 
@@ -50,5 +52,4 @@ actual val platformModule: Module = module {
     single { LocationProvider(androidContext()) }
     single { GeoDecoder(androidContext()) }
 
-    //single<SqlDriver> { DatabaseDriverFactory(get()).createDriver() }
 }
